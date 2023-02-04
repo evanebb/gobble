@@ -24,3 +24,10 @@ A small REST API to easily manage and generate iPXE configs, and match them to s
 - Server renders the iPXE config on the fly from the profile assigned to the system and returns it
 - This config contains the kernel, initrd and custom kernel parameters that were assigned. This points to a TFTP, HTTP, NFS, etc. server, which is all out of the control of this application.
 - Done!
+
+# TODO
+- Input validation in factories for models
+- Proper error handling instead of cascading them to the user through the API
+- Replace primitive types with custom types where necessary (e.g. kernel and initrd)
+- Documentation
+- Tests (?)
