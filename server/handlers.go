@@ -67,7 +67,7 @@ func (s *Server) getProfiles() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		profiles, err := s.profileRepo.GetProfiles()
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -84,7 +84,8 @@ func (s *Server) getProfiles() http.HandlerFunc {
 
 		jsonResp, err := json.Marshal(profilesResp)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -96,13 +97,13 @@ func (s *Server) getProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		p, err := s.profileRepo.GetProfileById(profileId)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -114,7 +115,7 @@ func (s *Server) getProfile() http.HandlerFunc {
 			KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
 		})
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -130,7 +131,7 @@ func (s *Server) createProfile() http.HandlerFunc {
 		decoder.DisallowUnknownFields()
 		err := decoder.Decode(&req)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -144,7 +145,7 @@ func (s *Server) putProfile() http.HandlerFunc {
 
 		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -152,19 +153,21 @@ func (s *Server) putProfile() http.HandlerFunc {
 		decoder.DisallowUnknownFields()
 		err = decoder.Decode(&req)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		kp, err := kernelparameters.New(req.KernelParameters)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
 		err = s.profileRepo.SetProfile(p)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		profileJson, err := json.Marshal(profileResponse{
@@ -175,7 +178,7 @@ func (s *Server) putProfile() http.HandlerFunc {
 			KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
 		})
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -188,14 +191,14 @@ func (s *Server) patchProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		// Get and map the current profile to the API DTO
 		p, err := s.profileRepo.GetProfileById(profileId)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -213,20 +216,22 @@ func (s *Server) patchProfile() http.HandlerFunc {
 		decoder.DisallowUnknownFields()
 		err = decoder.Decode(&req)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		kp, err := kernelparameters.New(req.KernelParameters)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// Map the DTO back to the model, this time with the newly supplied values from the request body
 		p = profile.New(profileId, req.Name, req.Description, req.Distro, kp)
 		err = s.profileRepo.SetProfile(p)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		profileJson, err := json.Marshal(profileResponse{
@@ -237,7 +242,7 @@ func (s *Server) patchProfile() http.HandlerFunc {
 			KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
 		})
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -292,14 +297,14 @@ func (s *Server) getPxeConfig() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mac, err := net.ParseMAC(r.URL.Query().Get("mac"))
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		systemService := system.NewService(s.distroRepo, s.profileRepo, s.systemRepo)
 		pxeConfig, err := systemService.RenderPxeConfig(mac)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
