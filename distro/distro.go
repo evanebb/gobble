@@ -2,10 +2,11 @@ package distro
 
 import (
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/google/uuid"
 )
 
 type Distro struct {
-	id               uint
+	id               uuid.UUID
 	name             string
 	description      string
 	kernel           string
@@ -13,7 +14,7 @@ type Distro struct {
 	kernelParameters kernelparameters.KernelParameters
 }
 
-func New(id uint, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) Distro {
+func New(id uuid.UUID, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) Distro {
 	return Distro{
 		id:               id,
 		name:             name,
@@ -24,7 +25,7 @@ func New(id uint, name string, description string, kernel string, initrd string,
 	}
 }
 
-func (d *Distro) Id() uint {
+func (d *Distro) Id() uuid.UUID {
 	return d.id
 }
 

@@ -2,19 +2,20 @@ package system
 
 import (
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/google/uuid"
 	"net"
 )
 
 type System struct {
-	id               uint
+	id               uuid.UUID
 	name             string
 	description      string
-	profile          uint
+	profile          uuid.UUID
 	mac              net.HardwareAddr
 	kernelParameters kernelparameters.KernelParameters
 }
 
-func New(id uint, name string, description string, profile uint, mac net.HardwareAddr, kernelParameters kernelparameters.KernelParameters) System {
+func New(id uuid.UUID, name string, description string, profile uuid.UUID, mac net.HardwareAddr, kernelParameters kernelparameters.KernelParameters) System {
 	return System{
 		id:               id,
 		name:             name,
@@ -25,7 +26,7 @@ func New(id uint, name string, description string, profile uint, mac net.Hardwar
 	}
 }
 
-func (s *System) Id() uint {
+func (s *System) Id() uuid.UUID {
 	return s.id
 }
 
@@ -37,7 +38,7 @@ func (s *System) Description() string {
 	return s.description
 }
 
-func (s *System) Profile() uint {
+func (s *System) Profile() uuid.UUID {
 	return s.profile
 }
 

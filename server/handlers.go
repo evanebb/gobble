@@ -49,18 +49,18 @@ func (s *Server) deleteDistro() http.HandlerFunc {
 }
 
 type profileRequest struct {
-	Name             string   `json:"name"`
-	Description      string   `json:"description"`
-	Distro           uint     `json:"distro"`
-	KernelParameters []string `json:"kernelParameters"`
+	Name             string    `json:"name"`
+	Description      string    `json:"description"`
+	Distro           uuid.UUID `json:"distro"`
+	KernelParameters []string  `json:"kernelParameters"`
 }
 
 type profileResponse struct {
-	Id               uint     `json:"id"`
-	Name             string   `json:"name"`
-	Description      string   `json:"description"`
-	Distro           uint     `json:"distro"`
-	KernelParameters []string `json:"kernelParameters"`
+	Id               uuid.UUID `json:"id"`
+	Name             string    `json:"name"`
+	Description      string    `json:"description"`
+	Distro           uuid.UUID `json:"distro"`
+	KernelParameters []string  `json:"kernelParameters"`
 }
 
 func (s *Server) getProfiles() http.HandlerFunc {
@@ -94,13 +94,13 @@ func (s *Server) getProfiles() http.HandlerFunc {
 
 func (s *Server) getProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		profileId, err := strconv.Atoi(chi.URLParam(r, "profileID"))
+		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
 			http.Error(w, err.Error(), 400)
 			return
 		}
 
-		p, err := s.profileRepo.GetProfileById(uint(profileId))
+		p, err := s.profileRepo.GetProfileById(profileId)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -142,12 +142,11 @@ func (s *Server) putProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req profileRequest
 
-		id, err := strconv.Atoi(chi.URLParam(r, "profileID"))
+		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		profileId := uint(id)
 
 		decoder := json.NewDecoder(r.Body)
 		decoder.DisallowUnknownFields()
@@ -187,12 +186,11 @@ func (s *Server) putProfile() http.HandlerFunc {
 
 func (s *Server) patchProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.Atoi(chi.URLParam(r, "profileID"))
+		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 		if err != nil {
 			http.Error(w, err.Error(), 400)
 			return
 		}
-		profileId := uint(id)
 
 		// Get and map the current profile to the API DTO
 		p, err := s.profileRepo.GetProfileById(profileId)

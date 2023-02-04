@@ -1,6 +1,9 @@
 package memory
 
-import "github.com/evanebb/gobble/profile"
+import (
+	"github.com/evanebb/gobble/profile"
+	"github.com/google/uuid"
+)
 
 type ProfileRepository struct {
 }
@@ -14,7 +17,7 @@ func (p ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 	panic("implement me")
 }
 
-func (p ProfileRepository) GetProfileById(id uint) (profile.Profile, error) {
+func (p ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -24,7 +27,7 @@ func (p ProfileRepository) SetProfile(pr profile.Profile) error {
 	panic("implement me")
 }
 
-func (p ProfileRepository) DeleteProfileById(id uint) error {
+func (p ProfileRepository) DeleteProfileById(id uuid.UUID) error {
 	//TODO implement me
 	panic("implement me")
 }

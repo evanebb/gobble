@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/system"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net"
 )
@@ -18,9 +19,10 @@ func NewSystemRepository(db *pgxpool.Pool) (SystemRepository, error) {
 
 type postgresSystem struct {
 	Id               uint
+	UUID             uuid.UUID
 	Name             string
 	Description      string
-	Profile          uint
+	Profile          uuid.UUID
 	Mac              net.HardwareAddr
 	KernelParameters []string
 }
@@ -28,7 +30,7 @@ type postgresSystem struct {
 func (r SystemRepository) GetSystems() ([]system.System, error) {
 	var systems []system.System
 
-	stmt := "SELECT id, name, description, profile, mac, kernelParameters FROM system"
+	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system"
 	rows, err := r.db.Query(context.Background(), stmt)
 	if err != nil {
 		return systems, err
@@ -38,7 +40,7 @@ func (r SystemRepository) GetSystems() ([]system.System, error) {
 		var sys system.System
 		var ps postgresSystem
 
-		err = rows.Scan(&ps.Id, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
+		err = rows.Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 		if err != nil {
 			return systems, err
 		}
@@ -48,8 +50,7 @@ func (r SystemRepository) GetSystems() ([]system.System, error) {
 			return systems, err
 		}
 
-		sys = system.New(ps.Id, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
-
+		sys = system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
 		systems = append(systems, sys)
 	}
 
@@ -61,8 +62,8 @@ func (r SystemRepository) GetSystemByMacAddress(mac net.HardwareAddr) (system.Sy
 	var ps postgresSystem
 
 	// TODO: type conversion for MAC, 99% sure that it will throw an error
-	stmt := "SELECT id, name, description, profile, mac, kernelParameters FROM system WHERE mac = $1"
-	err := r.db.QueryRow(context.Background(), stmt, mac).Scan(&ps.Id, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
+	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system WHERE mac = $1"
+	err := r.db.QueryRow(context.Background(), stmt, mac).Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 	if err != nil {
 		return sys, err
 	}
@@ -73,10 +74,10 @@ func (r SystemRepository) GetSystemByMacAddress(mac net.HardwareAddr) (system.Sy
 		return sys, err
 	}
 
-	return system.New(ps.Id, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
+	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
 }
 
-func (r SystemRepository) GetSystemById(id uint) (system.System, error) {
+func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 	var sys system.System
 	var ps postgresSystem
 
@@ -92,13 +93,13 @@ func (r SystemRepository) GetSystemById(id uint) (system.System, error) {
 		return sys, err
 	}
 
-	return system.New(ps.Id, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
+	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
 }
 
 func (r SystemRepository) SetSystem(s system.System) error {
 	// TODO: check if reusing arguments is possible
-	stmt := "INSERT INTO system (id, name, description, profile, mac, kernelParameters) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (id) DO UPDATE set name = $2, description = $3, profile = $4, mac = $5, kernelParameters = $6"
-	_, err := r.db.Exec(context.Background(), stmt, s.Id(), s.Name(), s.Description(), s.Profile(), s.Mac(), s.KernelParameters())
+	stmt := "INSERT INTO system (uuid, name, description, profile, mac, kernelParameters) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, profile = $4, mac = $5, kernelParameters = $6"
+	_, err := r.db.Exec(context.Background(), stmt, s.Id(), s.Name(), s.Description(), s.Profile(), s.Mac(), kernelparameters.FormatKernelParameters(s.KernelParameters()))
 	if err != nil {
 		return err
 	}
@@ -106,8 +107,8 @@ func (r SystemRepository) SetSystem(s system.System) error {
 	return nil
 }
 
-func (r SystemRepository) DeleteSystemById(id uint) error {
-	stmt := "DELETE FROM system WHERE id = $1"
+func (r SystemRepository) DeleteSystemById(id uuid.UUID) error {
+	stmt := "DELETE FROM system WHERE uuid = $1"
 	_, err := r.db.Exec(context.Background(), stmt, id)
 	if err != nil {
 		return err

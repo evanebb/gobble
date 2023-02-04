@@ -1,11 +1,14 @@
 package system
 
-import "net"
+import (
+	"github.com/google/uuid"
+	"net"
+)
 
 type Repository interface {
 	GetSystems() ([]System, error)
 	GetSystemByMacAddress(macAddress net.HardwareAddr) (System, error)
-	GetSystemById(id uint) (System, error)
+	GetSystemById(id uuid.UUID) (System, error)
 	SetSystem(s System) error
-	DeleteSystemById(id uint) error
+	DeleteSystemById(id uuid.UUID) error
 }

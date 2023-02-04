@@ -2,6 +2,7 @@ package memory
 
 import (
 	"github.com/evanebb/gobble/system"
+	"github.com/google/uuid"
 	"net"
 )
 
@@ -22,7 +23,7 @@ func (s SystemRepository) GetSystemByMacAddress(macAddress net.HardwareAddr) (sy
 	panic("implement me")
 }
 
-func (s SystemRepository) GetSystemById(id uint) (system.System, error) {
+func (s SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -32,7 +33,7 @@ func (s SystemRepository) SetSystem(sys system.System) error {
 	panic("implement me")
 }
 
-func (s SystemRepository) DeleteSystemById(id uint) error {
+func (s SystemRepository) DeleteSystemById(id uuid.UUID) error {
 	//TODO implement me
 	panic("implement me")
 }

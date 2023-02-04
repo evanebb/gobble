@@ -1,7 +1,8 @@
-drop table if exists distro;
-create table distro
+DROP TABLE IF EXISTS distro;
+CREATE TABLE distro
 (
-    id               int primary key,
+    id               int PRIMARY KEY,
+    uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
     kernel           varchar(128),
@@ -9,23 +10,25 @@ create table distro
     kernelParameters varchar(128)[]
 );
 
-drop table if exists profile;
-create table profile
+DROP TABLE IF EXISTS profile;
+CREATE TABLE profile
 (
-    id               int primary key,
+    id               int PRIMARY KEY,
+    uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
-    distro           int references distro (id),
+    distro           int REFERENCES distro (uuid),
     kernelParameters varchar(128)[]
 );
 
-drop table if exists system;
-create table system
+DROP TABLE IF EXISTS system;
+CREATE TABLE system
 (
-    id               int primary key,
+    id               int PRIMARY KEY,
+    uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
-    profile          int references profile (id),
+    profile          int REFERENCES profile (uuid),
     mac              macaddr,
     kernelParameters varchar(128)[]
 );
