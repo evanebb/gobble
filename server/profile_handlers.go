@@ -34,7 +34,7 @@ func (s *Server) getProfiles() http.HandlerFunc {
 
 		resp := make([]profileResponse, 0)
 		for _, p := range profiles {
-			profilesResp = append(profilesResp, profileResponse{
+			resp = append(resp, profileResponse{
 				Id:               p.Id(),
 				Name:             p.Name(),
 				Description:      p.Description(),
@@ -43,14 +43,14 @@ func (s *Server) getProfiles() http.HandlerFunc {
 			})
 		}
 
-		jsonResp, err := json.Marshal(profilesResp)
+		encodedResponse, err := json.Marshal(resp)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonResp)
+		w.Write(encodedResponse)
 	}
 }
 
@@ -68,7 +68,7 @@ func (s *Server) getProfile() http.HandlerFunc {
 			return
 		}
 
-		profileJson, err := json.Marshal(profileResponse{
+		encodedProfile, err := json.Marshal(profileResponse{
 			Id:               p.Id(),
 			Name:             p.Name(),
 			Description:      p.Description(),
@@ -81,7 +81,7 @@ func (s *Server) getProfile() http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(profileJson)
+		w.Write(encodedProfile)
 	}
 }
 
@@ -111,7 +111,7 @@ func (s *Server) createProfile() http.HandlerFunc {
 			return
 		}
 
-		profileJson, err := json.Marshal(profileResponse{
+		encodedProfile, err := json.Marshal(profileResponse{
 			Id:               p.Id(),
 			Name:             p.Name(),
 			Description:      p.Description(),
@@ -124,7 +124,7 @@ func (s *Server) createProfile() http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(profileJson)
+		w.Write(encodedProfile)
 	}
 }
 
@@ -159,7 +159,7 @@ func (s *Server) putProfile() http.HandlerFunc {
 			return
 		}
 
-		profileJson, err := json.Marshal(profileResponse{
+		encodedProfile, err := json.Marshal(profileResponse{
 			Id:               p.Id(),
 			Name:             p.Name(),
 			Description:      p.Description(),
@@ -172,7 +172,7 @@ func (s *Server) putProfile() http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(profileJson)
+		w.Write(encodedProfile)
 	}
 }
 
@@ -223,7 +223,7 @@ func (s *Server) patchProfile() http.HandlerFunc {
 			return
 		}
 
-		profileJson, err := json.Marshal(profileResponse{
+		encodedProfile, err := json.Marshal(profileResponse{
 			Id:               p.Id(),
 			Name:             p.Name(),
 			Description:      p.Description(),
@@ -236,7 +236,7 @@ func (s *Server) patchProfile() http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(profileJson)
+		w.Write(encodedProfile)
 	}
 }
 
