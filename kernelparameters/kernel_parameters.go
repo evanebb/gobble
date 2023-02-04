@@ -58,11 +58,8 @@ func FormatKernelParameters(kp KernelParameters) []string {
 	return s
 }
 
-// MergeKernelParameters merges two slices of KernelParameter, with values from the second slice taking precedence
-func MergeKernelParameters(kp1 map[string]string, kp2 ...map[string]string) map[string]string {
-	// Remove duplicate values and overwrite duplicate key-value options
-	// Use the first passed slice as the base/result. Loop over the second provided slice.
-	// Check if the parameter already exists in the result slice. If it does: key-value parameter, overwrite the value. Value parameter, do nothing.
+// MergeKernelParameters merges multiple KernelParameter maps, with values from maps being overwritten in the order that they're passed into the function
+func MergeKernelParameters(kp1 KernelParameters, kp2 ...KernelParameters) KernelParameters {
 	for _, kpMap := range kp2 {
 		for k, v := range kpMap {
 			kp1[k] = v
