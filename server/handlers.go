@@ -7,9 +7,9 @@ import (
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/system"
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"net"
 	"net/http"
-	"strconv"
 )
 
 func (s *Server) getDistros() http.HandlerFunc {
