@@ -45,6 +45,7 @@ func NewServer(db *pgxpool.Pool, router chi.Router) (Server, error) {
 }
 
 func (s *Server) Run() {
+	log.Println("starting API...")
 	s.routes()
 	log.Fatal(http.ListenAndServe(":8080", s.router))
 }
