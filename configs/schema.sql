@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS distro;
 CREATE TABLE distro
 (
-    id               int PRIMARY KEY,
+    id               serial PRIMARY KEY,
     uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
@@ -13,7 +13,7 @@ CREATE TABLE distro
 DROP TABLE IF EXISTS profile;
 CREATE TABLE profile
 (
-    id               int PRIMARY KEY,
+    id               serial PRIMARY KEY,
     uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
@@ -24,7 +24,7 @@ CREATE TABLE profile
 DROP TABLE IF EXISTS system;
 CREATE TABLE system
 (
-    id               int PRIMARY KEY,
+    id               serial PRIMARY KEY,
     uuid             uuid UNIQUE,
     name             varchar(64),
     description      varchar(128),
