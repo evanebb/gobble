@@ -135,7 +135,35 @@ func (s *Server) createProfile() http.HandlerFunc {
 			return
 		}
 
-		// FIXME: how the hell do I instantiate a new profile without an ID; fix: just don't leak the database id into your model :)
+		profileId := uuid.New()
+
+		kp, err := kernelparameters.New(req.KernelParameters)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+		err = s.profileRepo.SetProfile(p)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		profileJson, err := json.Marshal(profileResponse{
+			Id:               p.Id(),
+			Name:             p.Name(),
+			Description:      p.Description(),
+			Distro:           p.Distro(),
+			KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(profileJson)
 	}
 }
 
