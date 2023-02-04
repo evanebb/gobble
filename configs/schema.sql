@@ -7,7 +7,7 @@ create table distro
     kernel           varchar(128),
     initrd           varchar(128),
     kernelParameters varchar(128)[]
-)
+);
 
 drop table if exists profile;
 create table profile
@@ -17,7 +17,7 @@ create table profile
     description      varchar(128),
     distro           int references distro (id),
     kernelParameters varchar(128)[]
-)
+);
 
 drop table if exists system;
 create table system
@@ -28,4 +28,4 @@ create table system
     profile          int references profile (id),
     mac              macaddr,
     kernelParameters varchar(128)[]
-)
+);
