@@ -81,8 +81,8 @@ func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 	var sys system.System
 	var ps postgresSystem
 
-	stmt := "SELECT id, name, description, profile, mac, kernelParameters FROM system WHERE id = $1"
-	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&ps.Id, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
+	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system WHERE uuid = $1"
+	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 	if err != nil {
 		return sys, err
 	}
