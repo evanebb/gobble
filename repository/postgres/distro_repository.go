@@ -60,7 +60,7 @@ func (r DistroRepository) GetDistroById(id uuid.UUID) (distro.Distro, error) {
 	var d distro.Distro
 	var pd postgresDistro
 
-	stmt := "SELECT id, uuid, name, description, kernel, initrd, kernelParameters FROM distro WHERE id = $1"
+	stmt := "SELECT id, uuid, name, description, kernel, initrd, kernelParameters FROM distro WHERE uuid = $1"
 	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pd.Id, &pd.UUID, &pd.Name, &pd.Description, &pd.Kernel, &pd.Initrd, &pd.KernelParameters)
 	if err != nil {
 		return d, err
