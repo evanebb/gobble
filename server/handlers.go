@@ -281,7 +281,19 @@ func (s *Server) patchProfile() http.HandlerFunc {
 
 func (s *Server) deleteProfile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "not implemented", 501)
+		profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = s.profileRepo.DeleteProfileById(profileId)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write([]byte("successfully deleted profile"))
 	}
 }
 
