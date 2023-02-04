@@ -32,7 +32,7 @@ func (s *Server) getProfiles() http.HandlerFunc {
 			return
 		}
 
-		var profilesResp []profileResponse
+		resp := make([]profileResponse, 0)
 		for _, p := range profiles {
 			profilesResp = append(profilesResp, profileResponse{
 				Id:               p.Id(),
