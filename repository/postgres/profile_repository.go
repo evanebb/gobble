@@ -23,17 +23,17 @@ type postgresProfile struct {
 	KernelParameters []string
 }
 
-func (p ProfileRepository) GetProfiles() ([]profile.Profile, error) {
+func (r ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProfileRepository) GetProfileById(id uint) (profile.Profile, error) {
+func (r ProfileRepository) GetProfileById(id uint) (profile.Profile, error) {
 	var pr profile.Profile
 	var pp postgresProfile
 
 	stmt := "SELECT id, name, description, distro, kernelParameters FROM profile WHERE id = $1"
-	err := p.db.QueryRow(context.Background(), stmt, id).Scan(&pp.Id, &pp.Name, &pp.Description, &pp.Distro, &pp.KernelParameters)
+	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pp.Id, &pp.Name, &pp.Description, &pp.Distro, &pp.KernelParameters)
 	if err != nil {
 		return pr, err
 	}
@@ -47,12 +47,12 @@ func (p ProfileRepository) GetProfileById(id uint) (profile.Profile, error) {
 	return profile.New(pp.Id, pp.Name, pp.Description, pp.Distro, kp), nil
 }
 
-func (p ProfileRepository) SetProfile(pr profile.Profile) error {
+func (r ProfileRepository) SetProfile(p profile.Profile) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProfileRepository) DeleteProfileById(id uint) error {
+func (r ProfileRepository) DeleteProfileById(id uint) error {
 	//TODO implement me
 	panic("implement me")
 }
