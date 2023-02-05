@@ -29,6 +29,6 @@ CREATE TABLE system
     name             varchar(64),
     description      varchar(128),
     profile          uuid REFERENCES profile (uuid) ON DELETE CASCADE,
-    mac              macaddr,
+    mac              macaddr UNIQUE,
     kernelParameters varchar(128)[]
 );
