@@ -26,7 +26,10 @@ A small REST API to easily manage and generate iPXE configs, and match them to s
 - Done!
 
 # TODO
+- Build Docker image and docker-compose.yml
 - Input validation in factories for models
+- Deduplicate handler code
+- Wrapper methods to handle JSON responses
 - Proper error handling instead of cascading them to the user through the API
 - Replace primitive types with custom types where necessary (e.g. kernel and initrd)
 - Documentation
