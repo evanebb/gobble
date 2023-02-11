@@ -26,52 +26,15 @@ type distroResponse struct {
 	KernelParameters []string  `json:"kernelParameters"`
 }
 
-func (s *Server) getDistros() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		distros, err := s.distroRepo.GetDistros()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		resp := make([]distroResponse, 0)
-		for _, d := range distros {
-			resp = append(resp, distroResponse{
-				Id:               d.Id(),
-				Name:             d.Name(),
-				Description:      d.Description(),
-				Kernel:           d.Kernel(),
-				Initrd:           d.Initrd(),
-				KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
-			})
-		}
-
-		encodedResponse, err := json.Marshal(resp)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(encodedResponse)
+func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
+	distros, err := s.distroRepo.GetDistros()
+	if err != nil {
+		return err
 	}
-}
 
-func (s *Server) getDistro() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		d, err := s.distroRepo.GetDistroById(distroId)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		distroJson, err := json.Marshal(distroResponse{
+	resp := make([]distroResponse, 0)
+	for _, d := range distros {
+		resp = append(resp, distroResponse{
 			Id:               d.Id(),
 			Name:             d.Name(),
 			Description:      d.Description(),
@@ -79,190 +42,163 @@ func (s *Server) getDistro() http.HandlerFunc {
 			Initrd:           d.Initrd(),
 			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
 		})
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(distroJson)
 	}
+
+	return SendJSONResponse(w, resp)
 }
 
-func (s *Server) createDistro() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req distroRequest
-
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-		err := decoder.Decode(&req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		distroId := uuid.New()
-
-		kp, err := kernelparameters.New(req.KernelParameters)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
-		err = s.distroRepo.SetDistro(d)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		encodedDistro, err := json.Marshal(distroResponse{
-			Id:               d.Id(),
-			Name:             d.Name(),
-			Description:      d.Description(),
-			Kernel:           d.Kernel(),
-			Initrd:           d.Initrd(),
-			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
-		})
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(encodedDistro)
+func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
+	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	if err != nil {
+		return err
 	}
+
+	d, err := s.distroRepo.GetDistroById(distroId)
+	if err != nil {
+		return err
+	}
+
+	return SendJSONResponse(w, distroResponse{
+		Id:               d.Id(),
+		Name:             d.Name(),
+		Description:      d.Description(),
+		Kernel:           d.Kernel(),
+		Initrd:           d.Initrd(),
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
+	})
 }
 
-func (s *Server) putDistro() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req distroRequest
+func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
+	var req distroRequest
 
-		distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-		err = decoder.Decode(&req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		kp, err := kernelparameters.New(req.KernelParameters)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
-		err = s.distroRepo.SetDistro(d)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		encodedDistro, err := json.Marshal(distroResponse{
-			Id:               d.Id(),
-			Name:             d.Name(),
-			Description:      d.Description(),
-			Kernel:           d.Kernel(),
-			Initrd:           d.Initrd(),
-			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
-		})
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(encodedDistro)
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&req)
+	if err != nil {
+		return err
 	}
+
+	distroId := uuid.New()
+
+	kp, err := kernelparameters.New(req.KernelParameters)
+	if err != nil {
+		return err
+	}
+
+	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	err = s.distroRepo.SetDistro(d)
+	if err != nil {
+		return err
+	}
+
+	return SendJSONResponse(w, distroResponse{
+		Id:               d.Id(),
+		Name:             d.Name(),
+		Description:      d.Description(),
+		Kernel:           d.Kernel(),
+		Initrd:           d.Initrd(),
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
+	})
 }
 
-func (s *Server) patchDistro() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
+func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
+	var req distroRequest
 
-		// Get and map the current distro to the API DTO
-		d, err := s.distroRepo.GetDistroById(distroID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		req := distroRequest{
-			Name:             d.Name(),
-			Description:      d.Description(),
-			Kernel:           d.Kernel(),
-			Initrd:           d.Initrd(),
-			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
-		}
-
-		// Decode the request body into the current distro;
-		// Values supplied in the body will overwrite the current values,
-		// and anything that isn't supplied will be left alone
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-		err = decoder.Decode(&req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		kp, err := kernelparameters.New(req.KernelParameters)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Map the DTO back to the model, this time with the newly supplied values from the request body
-		d = distro.New(distroID, req.Name, req.Description, req.Kernel, req.Initrd, kp)
-		err = s.distroRepo.SetDistro(d)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		encodedDistro, err := json.Marshal(distroResponse{
-			Id:               d.Id(),
-			Name:             d.Name(),
-			Description:      d.Description(),
-			Kernel:           d.Kernel(),
-			Initrd:           d.Initrd(),
-			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
-		})
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(encodedDistro)
+	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	if err != nil {
+		return err
 	}
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&req)
+	if err != nil {
+		return err
+	}
+
+	kp, err := kernelparameters.New(req.KernelParameters)
+	if err != nil {
+		return err
+	}
+
+	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	err = s.distroRepo.SetDistro(d)
+	if err != nil {
+		return err
+	}
+
+	return SendJSONResponse(w, distroResponse{
+		Id:               d.Id(),
+		Name:             d.Name(),
+		Description:      d.Description(),
+		Kernel:           d.Kernel(),
+		Initrd:           d.Initrd(),
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
+	})
 }
 
-func (s *Server) deleteDistro() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		err = s.distroRepo.DeleteDistroById(distroID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write([]byte("successfully deleted distro"))
+func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
+	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	if err != nil {
+		return err
 	}
+
+	// Get and map the current distro to the API DTO
+	d, err := s.distroRepo.GetDistroById(distroID)
+	if err != nil {
+		return err
+	}
+
+	req := distroRequest{
+		Name:             d.Name(),
+		Description:      d.Description(),
+		Kernel:           d.Kernel(),
+		Initrd:           d.Initrd(),
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
+	}
+
+	// Decode the request body into the current distro;
+	// Values supplied in the body will overwrite the current values,
+	// and anything that isn't supplied will be left alone
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&req)
+	if err != nil {
+		return err
+	}
+
+	kp, err := kernelparameters.New(req.KernelParameters)
+	if err != nil {
+		return err
+	}
+
+	// Map the DTO back to the model, this time with the newly supplied values from the request body
+	d = distro.New(distroID, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	err = s.distroRepo.SetDistro(d)
+	if err != nil {
+		return err
+	}
+
+	return SendJSONResponse(w, distroResponse{
+		Id:               d.Id(),
+		Name:             d.Name(),
+		Description:      d.Description(),
+		Kernel:           d.Kernel(),
+		Initrd:           d.Initrd(),
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters()),
+	})
+}
+
+func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
+	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	if err != nil {
+		return err
+	}
+
+	err = s.distroRepo.DeleteDistroById(distroID)
+	if err != nil {
+		return err
+	}
+
+	return SendJSONResponse(w, "successfully deleted distro")
 }

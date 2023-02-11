@@ -8,43 +8,42 @@ import (
 func (s *Server) routes() {
 	s.router.Use(middleware.Logger)
 	s.router.Route("/api", func(r chi.Router) {
-		// FIXME: set JSON header right here :)
 		r.Route("/distros", func(r chi.Router) {
-			r.Get("/", s.getDistros())
-			r.Post("/", s.createDistro())
+			r.Get("/", errorHandler(s.getDistros))
+			r.Post("/", errorHandler(s.createDistro))
 
 			r.Route("/{distroID}", func(r chi.Router) {
-				r.Get("/", s.getDistro())
-				r.Put("/", s.putDistro())
-				r.Patch("/", s.patchDistro())
-				r.Delete("/", s.deleteDistro())
+				r.Get("/", errorHandler(s.getDistro))
+				r.Put("/", errorHandler(s.putDistro))
+				r.Patch("/", errorHandler(s.patchDistro))
+				r.Delete("/", errorHandler(s.deleteDistro))
 			})
 		})
 
 		r.Route("/profiles", func(r chi.Router) {
-			r.Get("/", s.getProfiles())
-			r.Post("/", s.createProfile())
+			r.Get("/", errorHandler(s.getProfiles))
+			r.Post("/", errorHandler(s.createProfile))
 
 			r.Route("/{profileID}", func(r chi.Router) {
-				r.Get("/", s.getProfile())
-				r.Put("/", s.putProfile())
-				r.Patch("/", s.patchProfile())
-				r.Delete("/", s.deleteProfile())
+				r.Get("/", errorHandler(s.getProfile))
+				r.Put("/", errorHandler(s.putProfile))
+				r.Patch("/", errorHandler(s.patchProfile))
+				r.Delete("/", errorHandler(s.deleteProfile))
 			})
 		})
 
 		r.Route("/systems", func(r chi.Router) {
-			r.Get("/", s.getSystems())
-			r.Post("/", s.createSystem())
+			r.Get("/", errorHandler(s.getSystems))
+			r.Post("/", errorHandler(s.createSystem))
 
 			r.Route("/{systemID}", func(r chi.Router) {
-				r.Get("/", s.getSystem())
-				r.Put("/", s.putSystem())
-				r.Patch("/", s.patchSystem())
-				r.Delete("/", s.deleteSystem())
+				r.Get("/", errorHandler(s.getSystem))
+				r.Put("/", errorHandler(s.putSystem))
+				r.Patch("/", errorHandler(s.patchSystem))
+				r.Delete("/", errorHandler(s.deleteSystem))
 			})
 		})
 
-		r.Get("/pxe-config", s.getPxeConfig())
+		r.Get("/pxe-config", errorHandler(s.getPxeConfig))
 	})
 }
