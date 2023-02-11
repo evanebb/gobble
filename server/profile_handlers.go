@@ -47,7 +47,7 @@ func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	p, err := s.profileRepo.GetProfileById(profileId)
@@ -70,14 +70,14 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	profileId := uuid.New()
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
@@ -100,19 +100,19 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 
 	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
@@ -133,7 +133,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Get and map the current profile to the API DTO
@@ -156,12 +156,12 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
@@ -183,7 +183,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	err = s.profileRepo.DeleteProfileById(profileId)

@@ -50,7 +50,7 @@ func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
 	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	d, err := s.distroRepo.GetDistroById(distroId)
@@ -75,14 +75,14 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	distroId := uuid.New()
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
@@ -106,19 +106,19 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 
 	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
@@ -140,7 +140,7 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Get and map the current distro to the API DTO
@@ -164,12 +164,12 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&req)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	kp, err := kernelparameters.New(req.KernelParameters)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
@@ -192,7 +192,7 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
 	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	err = s.distroRepo.DeleteDistroById(distroID)
