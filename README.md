@@ -11,8 +11,9 @@ A small REST API to easily manage and generate iPXE configs, and match them to s
 
 # What does it use?
 
-- PostgreSQL database for storage (using pgx)
-- JSON-based REST API with go-chi
+- PostgreSQL database for storage (using `pgx` for database communication)
+- JSON-based REST API with `go-chi`
+- UUIDs to identify resources using Google's `uuid` package
 
 # Process
 
