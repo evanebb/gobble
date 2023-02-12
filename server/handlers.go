@@ -13,14 +13,17 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 		err := h(w, r)
 		if err != nil {
 			var httpErr HTTPError
+			var statusCode int
 			if errors.As(err, &httpErr) {
-				w.WriteHeader(httpErr.StatusCode)
+				statusCode = httpErr.StatusCode
 			} else {
-				w.WriteHeader(http.StatusInternalServerError)
+				statusCode = http.StatusInternalServerError
 			}
 
-			// FIXME: only log server errors, don't care about bad request errors
-			log.Println(err)
+			w.WriteHeader(statusCode)
+			if statusCode == http.StatusInternalServerError {
+				log.Println(err)
+			}
 			if err := SendJSONResponse(w, err.Error()); err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
