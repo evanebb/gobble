@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"fmt"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository/postgres"
@@ -9,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 type Server struct {
@@ -18,8 +22,25 @@ type Server struct {
 	router      chi.Router
 }
 
-func NewServer(db *pgxpool.Pool, router chi.Router) (Server, error) {
+func NewServer() (Server, error) {
 	var s Server
+
+	// FIXME: proper configuration handling
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASS")
+	host := os.Getenv("DB_HOST")
+	database := os.Getenv("DB_NAME")
+	portStr := os.Getenv("DB_PORT")
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cs := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", user, pass, host, port, database)
+	db, err := pgxpool.New(context.Background(), cs)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// FIXME: don't instantiate the repositories here?
 	dr, err := postgres.NewDistroRepository(db)
@@ -36,6 +57,8 @@ func NewServer(db *pgxpool.Pool, router chi.Router) (Server, error) {
 	if err != nil {
 		return s, err
 	}
+
+	router := chi.NewRouter()
 
 	s.distroRepo = dr
 	s.profileRepo = pr
