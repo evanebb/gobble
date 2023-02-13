@@ -42,7 +42,6 @@ func NewServer() (Server, error) {
 		log.Fatal(err)
 	}
 
-	// FIXME: don't instantiate the repositories here?
 	dr, err := postgres.NewDistroRepository(db)
 	if err != nil {
 		return s, err

@@ -61,7 +61,6 @@ func (r SystemRepository) GetSystemByMacAddress(mac net.HardwareAddr) (system.Sy
 	var sys system.System
 	var ps postgresSystem
 
-	// TODO: type conversion for MAC, 99% sure that it will throw an error
 	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system WHERE mac = $1"
 	err := r.db.QueryRow(context.Background(), stmt, mac).Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 	if err != nil {
@@ -97,7 +96,6 @@ func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 }
 
 func (r SystemRepository) SetSystem(s system.System) error {
-	// TODO: check if reusing arguments is possible
 	stmt := "INSERT INTO system (uuid, name, description, profile, mac, kernelParameters) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, profile = $4, mac = $5, kernelParameters = $6"
 	_, err := r.db.Exec(context.Background(), stmt, s.Id(), s.Name(), s.Description(), s.Profile(), s.Mac(), kernelparameters.FormatKernelParameters(s.KernelParameters()))
 	if err != nil {
