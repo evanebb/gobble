@@ -70,5 +70,5 @@ func NewServer() (Server, error) {
 func (s *Server) Run() {
 	log.Println("starting API...")
 	s.routes()
-	log.Fatal(http.ListenAndServe(":8080", s.router))
+	log.Fatal(http.ListenAndServe(":80", s.router))
 }
