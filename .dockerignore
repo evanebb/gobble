@@ -1,0 +1,4 @@
+api/
+configs/
+Dockerfile
+*.md

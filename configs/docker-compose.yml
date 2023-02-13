@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  gobble:
+    image: localhost/evanebb/gobble:latest
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - "80:80/tcp"
+    environment:
+      DB_USER: gobble
+      DB_PASS: Welkom123!
+      DB_HOST: database
+      DB_NAME: gobble
+      DB_PORT: 5432
+
+  database:
+    image: postgres:15
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+      - "./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro"
+    environment:
+      POSTGRES_USER: gobble
+      POSTGRES_DB: gobble
+      POSTGRES_PASSWORD: Welkom123!
+
+volumes:
+  db_data: {}

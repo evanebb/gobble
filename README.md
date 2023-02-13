@@ -28,7 +28,7 @@ A small REST API to easily manage and generate iPXE configs, and match them to s
 
 # TODO
 - [x] Wrapper methods for sending responses
-- [ ] Build Docker image and docker-compose.yml
+- [x] Build Docker image and docker-compose.yml
 - [ ] Input validation in factories for models
 - [ ] Documentation
 - [ ] Tests
