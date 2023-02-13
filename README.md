@@ -30,6 +30,8 @@ A small REST API to easily manage and generate iPXE configs, and match them to s
 - [x] Wrapper methods for sending responses
 - [x] Build Docker image and docker-compose.yml
 - [ ] Input validation in factories for models
+- [ ] Uniqueness checks (for names, MAC addresses) inside code instead of just in the database
+- [ ] Check whether or not supplied linked distro/profile exists before creating instead of letting the foreign key handle it
 - [ ] Documentation
 - [ ] Tests
 - [ ] Proper error handling instead of cascading them to the user through the API
