@@ -8,12 +8,12 @@ import (
 )
 
 type Distro struct {
-	id               uuid.UUID
-	name             string
-	description      string
-	kernel           string
-	initrd           string
-	kernelParameters kernelparameters.KernelParameters
+	Id               uuid.UUID
+	Name             string
+	Description      string
+	Kernel           string
+	Initrd           string
+	KernelParameters kernelparameters.KernelParameters
 }
 
 func New(id uuid.UUID, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) (Distro, error) {
@@ -24,12 +24,12 @@ func New(id uuid.UUID, name string, description string, kernel string, initrd st
 	}
 
 	return Distro{
-		id:               id,
-		name:             name,
-		description:      description,
-		kernel:           kernel,
-		initrd:           initrd,
-		kernelParameters: kernelParameters,
+		Id:               id,
+		Name:             name,
+		Description:      description,
+		Kernel:           kernel,
+		Initrd:           initrd,
+		KernelParameters: kernelParameters,
 	}, nil
 }
 
@@ -45,28 +45,4 @@ func validateName(name string) error {
 	}
 
 	return nil
-}
-
-func (d Distro) Id() uuid.UUID {
-	return d.id
-}
-
-func (d Distro) Name() string {
-	return d.name
-}
-
-func (d Distro) Description() string {
-	return d.description
-}
-
-func (d Distro) Kernel() string {
-	return d.kernel
-}
-
-func (d Distro) Initrd() string {
-	return d.initrd
-}
-
-func (d Distro) KernelParameters() kernelparameters.KernelParameters {
-	return d.kernelParameters
 }

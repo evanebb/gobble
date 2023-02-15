@@ -47,9 +47,9 @@ func (s Service) RenderPxeConfig(mac net.HardwareAddr) (string, error) {
 		return "", err
 	}
 
-	kp := kernelparameters.MergeKernelParameters(d.KernelParameters(), p.KernelParameters(), sys.KernelParameters())
+	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters(), sys.KernelParameters())
 	kpSlice := kernelparameters.FormatKernelParameters(kp)
 	kpString := strings.Join(kpSlice, " ")
 
-	return fmt.Sprintf(pxeConfigTemplate, d.Kernel(), kpString, d.Initrd()), nil
+	return fmt.Sprintf(pxeConfigTemplate, d.Kernel, kpString, d.Initrd), nil
 }

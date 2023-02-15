@@ -79,7 +79,7 @@ func (r DistroRepository) GetDistroById(id uuid.UUID) (distro.Distro, error) {
 
 func (r DistroRepository) SetDistro(d distro.Distro) error {
 	stmt := "INSERT INTO distro (uuid, name, description, kernel, initrd, kernelParameters) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, kernel = $4, initrd = $5, kernelParameters = $6"
-	_, err := r.db.Exec(context.Background(), stmt, d.Id(), d.Name(), d.Description(), d.Kernel(), d.Initrd(), kernelparameters.FormatKernelParameters(d.KernelParameters()))
+	_, err := r.db.Exec(context.Background(), stmt, d.Id, d.Name, d.Description, d.Kernel, d.Initrd, kernelparameters.FormatKernelParameters(d.KernelParameters))
 	if err != nil {
 		return err
 	}
