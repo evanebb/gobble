@@ -16,14 +16,14 @@ type Distro struct {
 	kernelParameters kernelparameters.KernelParameters
 }
 
-func New(id uuid.UUID, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) (*Distro, error) {
-	var d *Distro
+func New(id uuid.UUID, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) (Distro, error) {
+	var d Distro
 
 	if err := validateName(name); err != nil {
 		return d, err
 	}
 
-	return &Distro{
+	return Distro{
 		id:               id,
 		name:             name,
 		description:      description,
@@ -47,26 +47,26 @@ func validateName(name string) error {
 	return nil
 }
 
-func (d *Distro) Id() uuid.UUID {
+func (d Distro) Id() uuid.UUID {
 	return d.id
 }
 
-func (d *Distro) Name() string {
+func (d Distro) Name() string {
 	return d.name
 }
 
-func (d *Distro) Description() string {
+func (d Distro) Description() string {
 	return d.description
 }
 
-func (d *Distro) Kernel() string {
+func (d Distro) Kernel() string {
 	return d.kernel
 }
 
-func (d *Distro) Initrd() string {
+func (d Distro) Initrd() string {
 	return d.initrd
 }
 
-func (d *Distro) KernelParameters() kernelparameters.KernelParameters {
+func (d Distro) KernelParameters() kernelparameters.KernelParameters {
 	return d.kernelParameters
 }
