@@ -85,7 +85,11 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	d, err := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	if err != nil {
+		return err
+	}
+
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
 		return err
@@ -121,7 +125,11 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	d := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	d, err := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	if err != nil {
+		return err
+	}
+
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
 		return err
@@ -173,7 +181,11 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
-	d = distro.New(distroID, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	d, err = distro.New(distroID, req.Name, req.Description, req.Kernel, req.Initrd, kp)
+	if err != nil {
+		return err
+	}
+
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
 		return err

@@ -49,7 +49,10 @@ func (r DistroRepository) GetDistros() ([]distro.Distro, error) {
 			return distros, err
 		}
 
-		dis = distro.New(pd.UUID, pd.Name, pd.Description, pd.Kernel, pd.Initrd, kp)
+		dis, err = distro.New(pd.UUID, pd.Name, pd.Description, pd.Kernel, pd.Initrd, kp)
+		if err != nil {
+			return distros, err
+		}
 		distros = append(distros, dis)
 	}
 
@@ -71,7 +74,7 @@ func (r DistroRepository) GetDistroById(id uuid.UUID) (distro.Distro, error) {
 		return d, err
 	}
 
-	return distro.New(pd.UUID, pd.Name, pd.Description, pd.Kernel, pd.Initrd, kp), nil
+	return distro.New(pd.UUID, pd.Name, pd.Description, pd.Kernel, pd.Initrd, kp)
 }
 
 func (r DistroRepository) SetDistro(d distro.Distro) error {
