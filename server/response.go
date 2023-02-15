@@ -41,11 +41,13 @@ func SendFailResponse(w http.ResponseWriter, code int, message string) error {
 
 func SendJSONResponse(w http.ResponseWriter, code int, v any) error {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
 	return json.NewEncoder(w).Encode(v)
 }
 
-func SendPlainTextResponse(w http.ResponseWriter, v string) error {
+func SendPlainTextResponse(w http.ResponseWriter, code int, v string) error {
 	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(code)
 	_, err := fmt.Fprint(w, v)
 	return err
 }
