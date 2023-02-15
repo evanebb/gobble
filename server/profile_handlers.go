@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+/*
+ * Request and response structures, and their supporting functions
+ */
+
+// profileRequest is the JSON representation of a profile.Profile that is accepted by the API.
 type profileRequest struct {
 	Name             string    `json:"name"`
 	Description      string    `json:"description"`
@@ -16,6 +21,7 @@ type profileRequest struct {
 	KernelParameters []string  `json:"kernelParameters"`
 }
 
+// profileResponse is the JSON representation of a profile.Profile that is returned by the API.
 type profileResponse struct {
 	Id               uuid.UUID `json:"id"`
 	Name             string    `json:"name"`
@@ -23,6 +29,21 @@ type profileResponse struct {
 	Distro           uuid.UUID `json:"distro"`
 	KernelParameters []string  `json:"kernelParameters"`
 }
+
+// newProfileResponse accepts a profile.Profile, and casts it to a profileResponse.
+func newProfileResponse(p profile.Profile) profileResponse {
+	return profileResponse{
+		Id:               p.Id(),
+		Name:             p.Name(),
+		Description:      p.Description(),
+		Distro:           p.Distro(),
+		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
+	}
+}
+
+/*
+ * The actual HTTP handlers
+ */
 
 func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 	profiles, err := s.profileRepo.GetProfiles()

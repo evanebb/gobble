@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+/*
+ * Request and response structures, and their supporting functions
+ */
+
+// distroRequest is the JSON representation of a distro.Distro that is accepted by the API.
 type distroRequest struct {
 	Name             string   `json:"name"`
 	Description      string   `json:"description"`
@@ -17,6 +22,7 @@ type distroRequest struct {
 	KernelParameters []string `json:"kernelParameters"`
 }
 
+// distroResponse is the JSON representation of a distro.Distro that is returned by the API.
 type distroResponse struct {
 	Id               uuid.UUID `json:"id"`
 	Name             string    `json:"name"`
@@ -25,6 +31,22 @@ type distroResponse struct {
 	Initrd           string    `json:"initrd"`
 	KernelParameters []string  `json:"kernelParameters"`
 }
+
+// newDistroResponse accepts a distro.Distro, and casts it into a distroResponse.
+func newDistroResponse(d distro.Distro) distroResponse {
+	return distroResponse{
+		Id:               d.Id,
+		Name:             d.Name,
+		Description:      d.Description,
+		Kernel:           d.Kernel,
+		Initrd:           d.Initrd,
+		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
+	}
+}
+
+/*
+ * The actual HTTP handlers
+ */
 
 func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 	distros, err := s.distroRepo.GetDistros()

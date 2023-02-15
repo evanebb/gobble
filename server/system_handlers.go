@@ -10,6 +10,11 @@ import (
 	"net/http"
 )
 
+/*
+ * Request and response structures, and their supporting functions
+ */
+
+// systemRequest is the JSON representation of a system.System that is accepted by the API.
 type systemRequest struct {
 	Name             string    `json:"name"`
 	Description      string    `json:"description"`
@@ -18,6 +23,7 @@ type systemRequest struct {
 	KernelParameters []string  `json:"kernelParameters"`
 }
 
+// systemResponse is the JSON representation of a system.System that is returned by the API.
 type systemResponse struct {
 	Id               uuid.UUID `json:"id"`
 	Name             string    `json:"name"`
@@ -26,6 +32,22 @@ type systemResponse struct {
 	Mac              string    `json:"mac"`
 	KernelParameters []string  `json:"kernelParameters"`
 }
+
+// newSystemResponse accepts a system.System, and casts it into a systemResponse.
+func newSystemResponse(sys system.System) systemResponse {
+	return systemResponse{
+		Id:               sys.Id(),
+		Name:             sys.Name(),
+		Description:      sys.Description(),
+		Profile:          sys.Profile(),
+		Mac:              sys.Mac().String(),
+		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
+	}
+}
+
+/*
+ * The actual HTTP handlers
+ */
 
 func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 	systems, err := s.systemRepo.GetSystems()
