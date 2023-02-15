@@ -56,17 +56,10 @@ func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 
 	resp := make([]distroResponse, 0)
 	for _, d := range distros {
-		resp = append(resp, distroResponse{
-			Id:               d.Id,
-			Name:             d.Name,
-			Description:      d.Description,
-			Kernel:           d.Kernel,
-			Initrd:           d.Initrd,
-			KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
-		})
+		resp = append(resp, newDistroResponse(d))
 	}
 
-	return SendJSONResponse(w, resp)
+	return SendSuccessResponse(w, http.StatusOK, resp)
 }
 
 func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
@@ -80,14 +73,7 @@ func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, distroResponse{
-		Id:               d.Id,
-		Name:             d.Name,
-		Description:      d.Description,
-		Kernel:           d.Kernel,
-		Initrd:           d.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
@@ -117,14 +103,7 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, distroResponse{
-		Id:               d.Id,
-		Name:             d.Name,
-		Description:      d.Description,
-		Kernel:           d.Kernel,
-		Initrd:           d.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
-	})
+	return SendSuccessResponse(w, http.StatusCreated, newDistroResponse(d))
 }
 
 func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
@@ -157,14 +136,7 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, distroResponse{
-		Id:               d.Id,
-		Name:             d.Name,
-		Description:      d.Description,
-		Kernel:           d.Kernel,
-		Initrd:           d.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
@@ -213,14 +185,7 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, distroResponse{
-		Id:               d.Id,
-		Name:             d.Name,
-		Description:      d.Description,
-		Kernel:           d.Kernel,
-		Initrd:           d.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(d.KernelParameters),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
@@ -234,5 +199,5 @@ func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, "successfully deleted distro")
+	return SendSuccessResponse(w, http.StatusNoContent, nil)
 }

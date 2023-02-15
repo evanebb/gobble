@@ -53,16 +53,10 @@ func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 
 	resp := make([]profileResponse, 0)
 	for _, p := range profiles {
-		resp = append(resp, profileResponse{
-			Id:               p.Id(),
-			Name:             p.Name(),
-			Description:      p.Description(),
-			Distro:           p.Distro(),
-			KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
-		})
+		resp = append(resp, newProfileResponse(p))
 	}
 
-	return SendJSONResponse(w, resp)
+	return SendSuccessResponse(w, http.StatusOK, resp)
 }
 
 func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
@@ -76,13 +70,7 @@ func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, profileResponse{
-		Id:               p.Id(),
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
@@ -107,13 +95,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, profileResponse{
-		Id:               p.Id(),
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusCreated, newProfileResponse(p))
 }
 
 func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
@@ -142,13 +124,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, profileResponse{
-		Id:               p.Id(),
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
@@ -192,13 +168,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, profileResponse{
-		Id:               p.Id(),
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
@@ -212,5 +182,6 @@ func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, "successfully deleted profile")
+	// No data to return, just pass nil
+	return SendSuccessResponse(w, http.StatusNoContent, nil)
 }

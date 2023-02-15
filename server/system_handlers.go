@@ -57,17 +57,10 @@ func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 
 	resp := make([]systemResponse, 0)
 	for _, sys := range systems {
-		resp = append(resp, systemResponse{
-			Id:               sys.Id(),
-			Name:             sys.Name(),
-			Description:      sys.Description(),
-			Profile:          sys.Profile(),
-			Mac:              sys.Mac().String(),
-			KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
-		})
+		resp = append(resp, newSystemResponse(sys))
 	}
 
-	return SendJSONResponse(w, resp)
+	return SendSuccessResponse(w, http.StatusOK, resp)
 }
 
 func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
@@ -81,14 +74,7 @@ func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, systemResponse{
-		Id:               sys.Id(),
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
@@ -118,14 +104,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, systemResponse{
-		Id:               sys.Id(),
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusCreated, newSystemResponse(sys))
 }
 
 func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
@@ -159,14 +138,7 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, systemResponse{
-		Id:               sys.Id(),
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
@@ -216,14 +188,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, systemResponse{
-		Id:               sys.Id(),
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
-	})
+	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
@@ -237,7 +202,7 @@ func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendJSONResponse(w, "successfully deleted system")
+	return SendSuccessResponse(w, http.StatusNoContent, nil)
 }
 
 func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
@@ -252,5 +217,5 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return SendPlainTextResponse(w, pxeConfig)
+	return SendPlainTextResponse(w, http.StatusOK, pxeConfig)
 }
