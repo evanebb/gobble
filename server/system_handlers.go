@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/system"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net"
 	"net/http"
@@ -64,7 +63,7 @@ func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := uuid.Parse(chi.URLParam(r, "systemID"))
+	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -110,7 +109,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 	var req systemRequest
 
-	systemId, err := uuid.Parse(chi.URLParam(r, "systemID"))
+	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -142,7 +141,7 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := uuid.Parse(chi.URLParam(r, "systemID"))
+	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -192,7 +191,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := uuid.Parse(chi.URLParam(r, "systemID"))
+	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

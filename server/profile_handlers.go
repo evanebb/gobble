@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/profile"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"net/http"
 )
@@ -60,7 +59,7 @@ func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
+	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -101,7 +100,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 	var req profileRequest
 
-	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
+	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -128,7 +127,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
+	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -172,7 +171,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := uuid.Parse(chi.URLParam(r, "profileID"))
+	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

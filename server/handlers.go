@@ -2,6 +2,9 @@ package server
 
 import (
 	"errors"
+	"fmt"
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
 )
@@ -36,4 +39,14 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 			http.Error(w, "Something really bad happened, please check the logs!", http.StatusInternalServerError)
 		}
 	}
+}
+
+// getUUIDFromRequest gets and parses the UUID from the request. If it's not a valid UUID, an error is returned.
+func getUUIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	uuidString := chi.URLParam(r, "uuid")
+	UUID, err := uuid.Parse(uuidString)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("[%s] is not a valid UUID: [%w]", uuidString, err)
+	}
+	return UUID, nil
 }

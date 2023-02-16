@@ -12,7 +12,7 @@ func (s *Server) routes() {
 			r.Get("/", errorHandler(s.getDistros))
 			r.Post("/", errorHandler(s.createDistro))
 
-			r.Route("/{distroID}", func(r chi.Router) {
+			r.Route("/{uuid}", func(r chi.Router) {
 				r.Get("/", errorHandler(s.getDistro))
 				r.Put("/", errorHandler(s.putDistro))
 				r.Patch("/", errorHandler(s.patchDistro))
@@ -24,7 +24,7 @@ func (s *Server) routes() {
 			r.Get("/", errorHandler(s.getProfiles))
 			r.Post("/", errorHandler(s.createProfile))
 
-			r.Route("/{profileID}", func(r chi.Router) {
+			r.Route("/{uuid}", func(r chi.Router) {
 				r.Get("/", errorHandler(s.getProfile))
 				r.Put("/", errorHandler(s.putProfile))
 				r.Patch("/", errorHandler(s.patchProfile))
@@ -36,7 +36,7 @@ func (s *Server) routes() {
 			r.Get("/", errorHandler(s.getSystems))
 			r.Post("/", errorHandler(s.createSystem))
 
-			r.Route("/{systemID}", func(r chi.Router) {
+			r.Route("/{uuid}", func(r chi.Router) {
 				r.Get("/", errorHandler(s.getSystem))
 				r.Put("/", errorHandler(s.putSystem))
 				r.Patch("/", errorHandler(s.patchSystem))
