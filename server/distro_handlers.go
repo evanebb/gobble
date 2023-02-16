@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/go-chi/chi/v5"
@@ -44,6 +45,16 @@ func newDistroResponse(d distro.Distro) distroResponse {
 	}
 }
 
+// getDistroIDFromRequest gets the distro ID (UUID) from the request URL, and parses it to a UUID. If it's not a valid UUID, an error is returned.
+func getDistroIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	uuidString := chi.URLParam(r, "distroID")
+	distroID, err := uuid.Parse(uuidString)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%q is not a valid UUID: %w", uuidString, err)
+	}
+	return distroID, nil
+}
+
 /*
  * The actual HTTP handlers
  */
@@ -63,7 +74,7 @@ func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
-	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	distroId, err := getDistroIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -109,7 +120,7 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 	var req distroRequest
 
-	distroId, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	distroId, err := getDistroIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -140,7 +151,7 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
-	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	distroID, err := getDistroIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -189,7 +200,7 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
-	distroID, err := uuid.Parse(chi.URLParam(r, "distroID"))
+	distroID, err := getDistroIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
