@@ -97,7 +97,7 @@ func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 
 func (r SystemRepository) SetSystem(s system.System) error {
 	stmt := "INSERT INTO system (uuid, name, description, profile, mac, kernelParameters) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, profile = $4, mac = $5, kernelParameters = $6"
-	_, err := r.db.Exec(context.Background(), stmt, s.Id(), s.Name(), s.Description(), s.Profile(), s.Mac(), kernelparameters.FormatKernelParameters(s.KernelParameters()))
+	_, err := r.db.Exec(context.Background(), stmt, s.Id, s.Name, s.Description, s.Profile, s.Mac, kernelparameters.FormatKernelParameters(s.KernelParameters))
 	if err != nil {
 		return err
 	}

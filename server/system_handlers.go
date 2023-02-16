@@ -36,12 +36,12 @@ type systemResponse struct {
 // newSystemResponse accepts a system.System, and casts it into a systemResponse.
 func newSystemResponse(sys system.System) systemResponse {
 	return systemResponse{
-		Id:               sys.Id(),
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
+		Id:               sys.Id,
+		Name:             sys.Name,
+		Description:      sys.Description,
+		Profile:          sys.Profile,
+		Mac:              sys.Mac.String(),
+		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters),
 	}
 }
 
@@ -154,11 +154,11 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	req := systemRequest{
-		Name:             sys.Name(),
-		Description:      sys.Description(),
-		Profile:          sys.Profile(),
-		Mac:              sys.Mac().String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters()),
+		Name:             sys.Name,
+		Description:      sys.Description,
+		Profile:          sys.Profile,
+		Mac:              sys.Mac.String(),
+		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters),
 	}
 
 	// Decode the request body into the current system;

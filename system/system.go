@@ -7,45 +7,21 @@ import (
 )
 
 type System struct {
-	id               uuid.UUID
-	name             string
-	description      string
-	profile          uuid.UUID
-	mac              net.HardwareAddr
-	kernelParameters kernelparameters.KernelParameters
+	Id               uuid.UUID
+	Name             string
+	Description      string
+	Profile          uuid.UUID
+	Mac              net.HardwareAddr
+	KernelParameters kernelparameters.KernelParameters
 }
 
 func New(id uuid.UUID, name string, description string, profile uuid.UUID, mac net.HardwareAddr, kernelParameters kernelparameters.KernelParameters) System {
 	return System{
-		id:               id,
-		name:             name,
-		description:      description,
-		profile:          profile,
-		mac:              mac,
-		kernelParameters: kernelParameters,
+		Id:               id,
+		Name:             name,
+		Description:      description,
+		Profile:          profile,
+		Mac:              mac,
+		KernelParameters: kernelParameters,
 	}
-}
-
-func (s *System) Id() uuid.UUID {
-	return s.id
-}
-
-func (s *System) Name() string {
-	return s.name
-}
-
-func (s *System) Description() string {
-	return s.description
-}
-
-func (s *System) Profile() uuid.UUID {
-	return s.profile
-}
-
-func (s *System) Mac() net.HardwareAddr {
-	return s.mac
-}
-
-func (s *System) KernelParameters() kernelparameters.KernelParameters {
-	return s.kernelParameters
 }
