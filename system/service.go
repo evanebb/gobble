@@ -37,17 +37,17 @@ func (s Service) RenderPxeConfig(mac net.HardwareAddr) (string, error) {
 		return "", err
 	}
 
-	p, err := s.profileRepo.GetProfileById(sys.Profile())
+	p, err := s.profileRepo.GetProfileById(sys.Profile)
 	if err != nil {
 		return "", err
 	}
 
-	d, err := s.distroRepo.GetDistroById(p.Distro())
+	d, err := s.distroRepo.GetDistroById(p.Distro)
 	if err != nil {
 		return "", err
 	}
 
-	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters(), sys.KernelParameters())
+	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters, sys.KernelParameters)
 	kpSlice := kernelparameters.FormatKernelParameters(kp)
 	kpString := strings.Join(kpSlice, " ")
 
