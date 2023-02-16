@@ -51,3 +51,10 @@ func SendPlainTextResponse(w http.ResponseWriter, code int, v string) error {
 	_, err := fmt.Fprint(w, v)
 	return err
 }
+
+func SendHTMLResponse(w http.ResponseWriter, code int, v string) error {
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(code)
+	_, err := fmt.Fprint(w, v)
+	return err
+}
