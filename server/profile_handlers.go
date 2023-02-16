@@ -33,11 +33,11 @@ type profileResponse struct {
 // newProfileResponse accepts a profile.Profile, and casts it to a profileResponse.
 func newProfileResponse(p profile.Profile) profileResponse {
 	return profileResponse{
-		Id:               p.Id(),
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
+		Id:               p.Id,
+		Name:             p.Name,
+		Description:      p.Description,
+		Distro:           p.Distro,
+		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
 	}
 }
 
@@ -140,10 +140,10 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	req := profileRequest{
-		Name:             p.Name(),
-		Description:      p.Description(),
-		Distro:           p.Distro(),
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters()),
+		Name:             p.Name,
+		Description:      p.Description,
+		Distro:           p.Distro,
+		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
 	}
 
 	// Decode the request body into the current profile;

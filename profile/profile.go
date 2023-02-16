@@ -6,39 +6,19 @@ import (
 )
 
 type Profile struct {
-	id               uuid.UUID
-	name             string
-	description      string
-	distro           uuid.UUID
-	kernelParameters kernelparameters.KernelParameters
+	Id               uuid.UUID
+	Name             string
+	Description      string
+	Distro           uuid.UUID
+	KernelParameters kernelparameters.KernelParameters
 }
 
 func New(id uuid.UUID, name string, description string, distro uuid.UUID, kernelParameters kernelparameters.KernelParameters) Profile {
 	return Profile{
-		id:               id,
-		name:             name,
-		description:      description,
-		distro:           distro,
-		kernelParameters: kernelParameters,
+		Id:               id,
+		Name:             name,
+		Description:      description,
+		Distro:           distro,
+		KernelParameters: kernelParameters,
 	}
-}
-
-func (p Profile) Id() uuid.UUID {
-	return p.id
-}
-
-func (p Profile) Name() string {
-	return p.name
-}
-
-func (p Profile) Description() string {
-	return p.description
-}
-
-func (p Profile) Distro() uuid.UUID {
-	return p.distro
-}
-
-func (p Profile) KernelParameters() kernelparameters.KernelParameters {
-	return p.kernelParameters
 }

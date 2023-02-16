@@ -76,7 +76,7 @@ func (r ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error)
 
 func (r ProfileRepository) SetProfile(p profile.Profile) error {
 	stmt := "INSERT INTO profile (uuid, name, description, distro, kernelParameters) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, distro = $4, kernelParameters = $5"
-	_, err := r.db.Exec(context.Background(), stmt, p.Id(), p.Name(), p.Description(), p.Distro(), kernelparameters.FormatKernelParameters(p.KernelParameters()))
+	_, err := r.db.Exec(context.Background(), stmt, p.Id, p.Name, p.Description, p.Distro, kernelparameters.FormatKernelParameters(p.KernelParameters))
 	if err != nil {
 		return err
 	}
