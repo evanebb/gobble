@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+var fatalErrorMsg = "something really bad happened, please check the logs!"
+
 type ErrorHandlerFunc func(w http.ResponseWriter, r *http.Request) error
 
 func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
@@ -36,8 +38,23 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 			// This shouldn't ever happen, if it does just return a bogus response?
 			// We don't actually know whether a response has been written at this point; let's hope net/http handles that ;)
 			log.Println(err)
-			http.Error(w, "Something really bad happened, please check the logs!", http.StatusInternalServerError)
+			http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
 		}
+	}
+}
+
+func unknownEndpointHandler(w http.ResponseWriter, r *http.Request) {
+	if err := SendErrorResponse(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints"); err != nil {
+		log.Println(err)
+		http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
+	}
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	html := "<h1>Welcome to gobble!</h1><p>Refer to the documentation for the available API endpoints.</p>"
+	if err := SendHTMLResponse(w, http.StatusOK, html); err != nil {
+		log.Println(err)
+		http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
 	}
 }
 
