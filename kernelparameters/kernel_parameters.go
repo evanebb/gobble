@@ -1,7 +1,6 @@
 package kernelparameters
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -38,7 +37,7 @@ func validateParameter(v string) error {
 		return err
 	}
 	if matched {
-		return errors.New(fmt.Sprintf("kernel parameter [%s] contains illegal characters", v))
+		return NewInvalidParameterError(v)
 	}
 
 	return nil
