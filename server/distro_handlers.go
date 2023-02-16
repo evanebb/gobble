@@ -50,7 +50,7 @@ func getDistroIDFromRequest(r *http.Request) (uuid.UUID, error) {
 	uuidString := chi.URLParam(r, "distroID")
 	distroID, err := uuid.Parse(uuidString)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("%q is not a valid UUID: %w", uuidString, err)
+		return uuid.Nil, fmt.Errorf("[%s] is not a valid UUID: [%w]", uuidString, err)
 	}
 	return distroID, nil
 }
