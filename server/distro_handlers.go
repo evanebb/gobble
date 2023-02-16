@@ -51,7 +51,7 @@ func newDistroResponse(d distro.Distro) distroResponse {
 func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 	distros, err := s.distroRepo.GetDistros()
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	resp := make([]distroResponse, 0)
@@ -70,7 +70,7 @@ func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
 
 	d, err := s.distroRepo.GetDistroById(distroId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
@@ -95,12 +95,12 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 
 	d, err := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusCreated, newDistroResponse(d))
@@ -128,12 +128,12 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 
 	d, err := distro.New(distroId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
@@ -148,7 +148,7 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 	// Get and map the current distro to the API DTO
 	d, err := s.distroRepo.GetDistroById(distroID)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	req := distroRequest{
@@ -177,12 +177,12 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
 	d, err = distro.New(distroID, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	err = s.distroRepo.SetDistro(d)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
@@ -196,7 +196,7 @@ func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
 
 	err = s.distroRepo.DeleteDistroById(distroID)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusNoContent, nil)

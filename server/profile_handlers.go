@@ -48,7 +48,7 @@ func newProfileResponse(p profile.Profile) profileResponse {
 func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 	profiles, err := s.profileRepo.GetProfiles()
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	resp := make([]profileResponse, 0)
@@ -67,7 +67,7 @@ func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
 
 	p, err := s.profileRepo.GetProfileById(profileId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
@@ -92,7 +92,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusCreated, newProfileResponse(p))
@@ -121,7 +121,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
@@ -136,7 +136,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	// Get and map the current profile to the API DTO
 	p, err := s.profileRepo.GetProfileById(profileId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	req := profileRequest{
@@ -165,7 +165,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	p = profile.New(profileId, req.Name, req.Description, req.Distro, kp)
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
@@ -179,7 +179,7 @@ func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
 
 	err = s.profileRepo.DeleteProfileById(profileId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	// No data to return, just pass nil

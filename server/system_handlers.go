@@ -52,7 +52,7 @@ func newSystemResponse(sys system.System) systemResponse {
 func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 	systems, err := s.systemRepo.GetSystems()
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	resp := make([]systemResponse, 0)
@@ -71,7 +71,7 @@ func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
 
 	sys, err := s.systemRepo.GetSystemById(systemId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
@@ -101,7 +101,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 	sys := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusCreated, newSystemResponse(sys))
@@ -135,7 +135,7 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 	sys := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
@@ -150,7 +150,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 	// Get and map the current system to the API DTO
 	sys, err := s.systemRepo.GetSystemById(systemId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	req := systemRequest{
@@ -185,7 +185,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 	sys = system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
@@ -199,7 +199,7 @@ func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
 
 	err = s.systemRepo.DeleteSystemById(systemId)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendSuccessResponse(w, http.StatusNoContent, nil)
@@ -214,7 +214,7 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 	systemService := system.NewService(s.distroRepo, s.profileRepo, s.systemRepo)
 	pxeConfig, err := systemService.RenderPxeConfig(mac)
 	if err != nil {
-		return err
+		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return SendPlainTextResponse(w, http.StatusOK, pxeConfig)
