@@ -7,7 +7,11 @@ import (
 
 func (s *Server) routes() {
 	s.router.Use(middleware.Logger)
+
+	s.router.Get("/", indexHandler)
 	s.router.Route("/api", func(r chi.Router) {
+		r.NotFound(unknownEndpointHandler)
+
 		r.Route("/distros", func(r chi.Router) {
 			r.Get("/", errorHandler(s.getDistros))
 			r.Post("/", errorHandler(s.createDistro))
