@@ -43,19 +43,13 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 	}
 }
 
-func unknownEndpointHandler(w http.ResponseWriter, r *http.Request) {
-	if err := SendErrorResponse(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints"); err != nil {
-		log.Println(err)
-		http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
-	}
+func unknownEndpointHandler(w http.ResponseWriter, r *http.Request) error {
+	return SendErrorResponse(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints")
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
+func indexHandler(w http.ResponseWriter, r *http.Request) error {
 	html := "<h1>Welcome to gobble!</h1><p>Refer to the documentation for the available API endpoints.</p>"
-	if err := SendHTMLResponse(w, http.StatusOK, html); err != nil {
-		log.Println(err)
-		http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
-	}
+	return SendHTMLResponse(w, http.StatusOK, html)
 }
 
 // getUUIDFromRequest gets and parses the UUID from the request. If it's not a valid UUID, an error is returned.
