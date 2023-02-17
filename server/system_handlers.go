@@ -210,11 +210,23 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	systemService := system.NewService(s.distroRepo, s.profileRepo, s.systemRepo)
-	pxeConfig, err := systemService.RenderPxeConfig(mac)
+	sys, err := s.systemRepo.GetSystemByMacAddress(mac)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendPlainTextResponse(w, http.StatusOK, pxeConfig)
+	p, err := s.profileRepo.GetProfileById(sys.Profile)
+	if err != nil {
+		return NewHTTPError(err, http.StatusInternalServerError)
+	}
+
+	d, err := s.distroRepo.GetDistroById(p.Distro)
+	if err != nil {
+		return NewHTTPError(err, http.StatusInternalServerError)
+	}
+
+	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters, sys.KernelParameters)
+	pxeConfig := system.NewPxeConfig(d.Kernel, d.Initrd, kp)
+
+	return SendPlainTextResponse(w, http.StatusOK, pxeConfig.Render())
 }
