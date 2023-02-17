@@ -2,9 +2,12 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/evanebb/gobble/repository"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -66,6 +69,9 @@ func (r DistroRepository) GetDistroById(id uuid.UUID) (distro.Distro, error) {
 	stmt := "SELECT id, uuid, name, description, kernel, initrd, kernelParameters FROM distro WHERE uuid = $1"
 	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pd.Id, &pd.UUID, &pd.Name, &pd.Description, &pd.Kernel, &pd.Initrd, &pd.KernelParameters)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return d, repository.ErrNotFound
+		}
 		return d, err
 	}
 

@@ -2,9 +2,12 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/profile"
+	"github.com/evanebb/gobble/repository"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -62,6 +65,9 @@ func (r ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error)
 	stmt := "SELECT id, uuid, name, description, distro, kernelParameters FROM profile WHERE uuid = $1"
 	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pp.Id, &pp.UUID, &pp.Name, &pp.Description, &pp.Distro, &pp.KernelParameters)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return pr, repository.ErrNotFound
+		}
 		return pr, err
 	}
 

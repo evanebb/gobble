@@ -2,9 +2,12 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/evanebb/gobble/repository"
 	"github.com/evanebb/gobble/system"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net"
 )
@@ -64,6 +67,9 @@ func (r SystemRepository) GetSystemByMacAddress(mac net.HardwareAddr) (system.Sy
 	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system WHERE mac = $1"
 	err := r.db.QueryRow(context.Background(), stmt, mac).Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return sys, repository.ErrNotFound
+		}
 		return sys, err
 	}
 
@@ -83,6 +89,9 @@ func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 	stmt := "SELECT id, uuid, name, description, profile, mac, kernelParameters FROM system WHERE uuid = $1"
 	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&ps.Id, &ps.UUID, &ps.Name, &ps.Description, &ps.Profile, &ps.Mac, &ps.KernelParameters)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return sys, repository.ErrNotFound
+		}
 		return sys, err
 	}
 

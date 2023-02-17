@@ -2,8 +2,10 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/evanebb/gobble/repository"
 	"github.com/google/uuid"
 	"net/http"
 )
@@ -69,6 +71,9 @@ func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
 
 	d, err := s.distroRepo.GetDistroById(distroId)
 	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return NewHTTPError(err, http.StatusNotFound)
+		}
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
