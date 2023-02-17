@@ -22,6 +22,7 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 
 		var httpErr HTTPError
 		var statusCode int
+		var resp string
 
 		if errors.As(err, &httpErr) {
 			statusCode = httpErr.StatusCode
@@ -29,14 +30,18 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 			statusCode = http.StatusInternalServerError
 		}
 
-		// FIXME: probably want to log more than just 500's, this avoids log spam for bad request errors for now
-		if statusCode == http.StatusInternalServerError {
+		// For server-side errors, return a generic message and log the error; I don't want to expose potentially sensitive information from the error to the client.
+		// I don't care about logging client errors (e.g. bad requests), the error message should be descriptive enough for them to figure it out themselves.
+		if statusCode >= 500 && statusCode <= 599 {
 			log.Println(err)
+			resp = fatalErrorMsg
+		} else {
+			resp = err.Error()
 		}
 
-		if err := SendErrorResponse(w, statusCode, err.Error()); err != nil {
+		if err := SendErrorResponse(w, statusCode, resp); err != nil {
 			// This shouldn't ever happen, if it does just return a bogus response?
-			// We don't actually know whether a response has been written at this point; let's hope net/http handles that ;)
+			// I don't actually know whether a response has been written at this point; let's hope net/http handles that ;)
 			log.Println(err)
 			http.Error(w, fatalErrorMsg, http.StatusInternalServerError)
 		}
