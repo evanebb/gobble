@@ -51,7 +51,11 @@ func (r ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 			return profiles, err
 		}
 
-		pr = profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp)
+		pr, err = profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp)
+		if err != nil {
+			return profiles, err
+		}
+
 		profiles = append(profiles, pr)
 	}
 
@@ -77,7 +81,7 @@ func (r ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error)
 		return pr, err
 	}
 
-	return profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp), nil
+	return profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp)
 }
 
 func (r ProfileRepository) SetProfile(p profile.Profile) error {

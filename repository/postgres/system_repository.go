@@ -53,7 +53,11 @@ func (r SystemRepository) GetSystems() ([]system.System, error) {
 			return systems, err
 		}
 
-		sys = system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
+		sys, err = system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
+		if err != nil {
+			return systems, err
+		}
+
 		systems = append(systems, sys)
 	}
 
@@ -79,7 +83,7 @@ func (r SystemRepository) GetSystemByMacAddress(mac net.HardwareAddr) (system.Sy
 		return sys, err
 	}
 
-	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
+	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
 }
 
 func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
@@ -101,7 +105,7 @@ func (r SystemRepository) GetSystemById(id uuid.UUID) (system.System, error) {
 		return sys, err
 	}
 
-	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp), nil
+	return system.New(ps.UUID, ps.Name, ps.Description, ps.Profile, ps.Mac, kp)
 }
 
 func (r SystemRepository) SetSystem(s system.System) error {

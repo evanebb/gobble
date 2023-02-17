@@ -16,8 +16,8 @@ func TestNewProfile(t *testing.T) {
 		KernelParameters: kernelparameters.KernelParameters{},
 	}
 
-	actual := New(uuid.Nil, "TestProfile", "", uuid.Nil, kernelparameters.KernelParameters{})
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf(`New() = %v, expected: %v`, actual, expected)
+	actual, err := New(uuid.Nil, "TestProfile", "", uuid.Nil, kernelparameters.KernelParameters{})
+	if err != nil || !reflect.DeepEqual(actual, expected) {
+		t.Fatalf(`New() = %v, %v, expected: %v, nil`, actual, err, expected)
 	}
 }

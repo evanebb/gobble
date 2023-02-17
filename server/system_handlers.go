@@ -102,7 +102,11 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	sys := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	sys, err := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
@@ -136,7 +140,11 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	sys := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	sys, err := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
@@ -186,7 +194,11 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
-	sys = system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	sys, err = system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)

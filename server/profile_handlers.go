@@ -93,7 +93,11 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
@@ -122,7 +126,11 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	p := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
@@ -166,7 +174,11 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
-	p = profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err = profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	if err != nil {
+		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
 	err = s.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
