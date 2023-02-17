@@ -1,3 +1,4 @@
+![Build and test](https://github.com/evanebb/gobble/actions/workflows/go.yml/badge.svg)
 # gobble
 
 A small REST API to easily manage and generate iPXE configs, and match them to specific clients. It promotes reuse of OS distributions and kernel parameters.
