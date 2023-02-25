@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/evanebb/gobble/auth"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -10,6 +11,7 @@ func (s *Server) routes() {
 
 	s.router.Get("/", errorHandler(indexHandler))
 	s.router.Route("/api", func(r chi.Router) {
+		r.Use(auth.BasicAuth(s.apiUserRepo))
 		r.NotFound(errorHandler(unknownEndpointHandler))
 
 		r.Route("/distros", func(r chi.Router) {
@@ -49,5 +51,16 @@ func (s *Server) routes() {
 		})
 
 		r.Get("/pxe-config", errorHandler(s.getPxeConfig))
+
+		r.Route("/users", func(r chi.Router) {
+			r.Get("/", errorHandler(s.getUsers))
+			r.Post("/", errorHandler(s.createUser))
+
+			r.Route("/{uuid}", func(r chi.Router) {
+				r.Get("/", errorHandler(s.getUser))
+				r.Put("/", errorHandler(s.putUser))
+				r.Delete("/", errorHandler(s.deleteUser))
+			})
+		})
 	})
 }
