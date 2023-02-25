@@ -83,7 +83,7 @@ func (r ApiUserRepository) GetApiUserByName(name string) (auth.ApiUser, error) {
 }
 
 func (r ApiUserRepository) SetApiUser(a auth.ApiUser) error {
-	stmt := "INSERT INTO api_user (uuid, name, password) VALUES ($1, $2, $3)"
+	stmt := "INSERT INTO api_user (uuid, name, password) VALUES ($1, $2, $3) ON CONFLICT (uuid) DO UPDATE SET name = $2, password = $3"
 	_, err := r.db.Exec(context.Background(), stmt, a.Id, a.Name, a.Password)
 	return err
 }
