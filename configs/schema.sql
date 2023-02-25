@@ -41,3 +41,5 @@ CREATE TABLE api_user
     name     varchar(64) UNIQUE,
     password varchar
 );
+
+INSERT INTO api_user (uuid, name, password) VALUES ('62fb65af-2d12-4758-93d6-7b58eadde3f1', 'admin', '$2a$10$dYnBNGXrDH/1Rf75zqkENelFhrmPEQrUTARkgYOFhKyGJn/nvi90e');
