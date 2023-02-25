@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/evanebb/gobble/auth"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository/postgres"
@@ -16,6 +17,7 @@ import (
 )
 
 type Server struct {
+	apiUserRepo auth.ApiUserRepository
 	distroRepo  distro.Repository
 	profileRepo profile.Repository
 	systemRepo  system.Repository
@@ -42,6 +44,11 @@ func NewServer() (Server, error) {
 		log.Fatal(err)
 	}
 
+	ar, err := postgres.NewApiUserRepository(db)
+	if err != nil {
+		return s, err
+	}
+
 	dr, err := postgres.NewDistroRepository(db)
 	if err != nil {
 		return s, err
@@ -59,6 +66,7 @@ func NewServer() (Server, error) {
 
 	router := chi.NewRouter()
 
+	s.apiUserRepo = ar
 	s.distroRepo = dr
 	s.profileRepo = pr
 	s.systemRepo = sr

@@ -32,3 +32,12 @@ CREATE TABLE system
     mac              macaddr UNIQUE,
     kernelParameters varchar(128)[]
 );
+
+DROP TABLE IF EXISTS api_user;
+CREATE TABLE api_user
+(
+    id       serial PRIMARY KEY,
+    uuid     uuid UNIQUE,
+    name     varchar(64) UNIQUE,
+    password varchar
+);
