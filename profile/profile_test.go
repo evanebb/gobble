@@ -29,3 +29,17 @@ func TestNewProfileInvalidName(t *testing.T) {
 		t.Fatalf(`Expected New() to return invalid name error, got: %v, %v`, actual, err)
 	}
 }
+
+func TestNewProfileInvalidKernel(t *testing.T) {
+	actual, err := New(uuid.Nil, "TestProfile", "", "invalid kernel", "initrd", kernelparameters.KernelParameters{})
+	if err == nil {
+		t.Fatalf(`Expected New() to return invalid kernel error, got: %v, %v`, actual, err)
+	}
+}
+
+func TestNewProfileInvalidInitrd(t *testing.T) {
+	actual, err := New(uuid.Nil, "TestProfile", "", "kernel", "invalid initrd", kernelparameters.KernelParameters{})
+	if err == nil {
+		t.Fatalf(`Expected New() to return invalid initrd error, got: %v, %v`, actual, err)
+	}
+}
