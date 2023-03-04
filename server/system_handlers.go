@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/repository"
 	"github.com/evanebb/gobble/system"
@@ -61,7 +62,7 @@ func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 		resp = append(resp, newSystemResponse(sys))
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, resp)
+	return response.Success(w, http.StatusOK, resp)
 }
 
 func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
@@ -78,7 +79,7 @@ func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
+	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
@@ -112,7 +113,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusCreated, newSystemResponse(sys))
+	return response.Success(w, http.StatusCreated, newSystemResponse(sys))
 }
 
 func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
@@ -150,7 +151,7 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
+	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
@@ -204,7 +205,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newSystemResponse(sys))
+	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
 func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
@@ -218,7 +219,7 @@ func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusNoContent, nil)
+	return response.Success(w, http.StatusNoContent, nil)
 }
 
 func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
@@ -248,5 +249,5 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters, sys.KernelParameters)
 	pxeConfig := system.NewPxeConfig(d.Kernel, d.Initrd, kp)
 
-	return SendPlainTextResponse(w, http.StatusOK, pxeConfig.Render())
+	return response.PlainText(w, http.StatusOK, pxeConfig.Render())
 }

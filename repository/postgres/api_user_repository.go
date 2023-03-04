@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
-	"github.com/evanebb/gobble/auth"
+	"github.com/evanebb/gobble/api/auth"
 	"github.com/evanebb/gobble/repository"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

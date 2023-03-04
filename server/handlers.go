@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"github.com/evanebb/gobble/api/response"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"log"
@@ -39,7 +40,7 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 			resp = err.Error()
 		}
 
-		if err := SendErrorResponse(w, statusCode, resp); err != nil {
+		if err := response.Error(w, statusCode, resp); err != nil {
 			// This shouldn't ever happen, if it does just return a bogus response?
 			// I don't actually know whether a response has been written at this point; let's hope net/http handles that ;)
 			log.Println(err)
@@ -49,12 +50,12 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 }
 
 func unknownEndpointHandler(w http.ResponseWriter, r *http.Request) error {
-	return SendErrorResponse(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints")
+	return response.Error(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints")
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) error {
 	html := "<h1>Welcome to gobble!</h1><p>Refer to the documentation for the available API endpoints.</p>"
-	return SendHTMLResponse(w, http.StatusOK, html)
+	return response.HTML(w, http.StatusOK, html)
 }
 
 // getUUIDFromRequest gets and parses the UUID from the request. If it's not a valid UUID, an error is returned.

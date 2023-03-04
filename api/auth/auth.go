@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"encoding/json"
+	"github.com/evanebb/gobble/api/response"
 	"net/http"
 )
 
@@ -32,14 +32,8 @@ func BasicAuth(db ApiUserRepository) func(next http.Handler) http.Handler {
 }
 
 func basicAuthFailed(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusUnauthorized)
-	_ = json.NewEncoder(w).Encode(struct {
-		Status  string `json:"status"`
-		Data    any    `json:"data"`
-		Message string `json:"message"`
-	}{
-		Status:  "error",
-		Message: "authentication failed",
-	})
+	err := response.Error(w, http.StatusUnauthorized, "authentication failed")
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }

@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/repository"
@@ -60,7 +61,7 @@ func (s *Server) getDistros(w http.ResponseWriter, r *http.Request) error {
 		resp = append(resp, newDistroResponse(d))
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, resp)
+	return response.Success(w, http.StatusOK, resp)
 }
 
 func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
@@ -77,7 +78,7 @@ func (s *Server) getDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
+	return response.Success(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
@@ -107,7 +108,7 @@ func (s *Server) createDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusCreated, newDistroResponse(d))
+	return response.Success(w, http.StatusCreated, newDistroResponse(d))
 }
 
 func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
@@ -140,7 +141,7 @@ func (s *Server) putDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
+	return response.Success(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
@@ -189,7 +190,7 @@ func (s *Server) patchDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newDistroResponse(d))
+	return response.Success(w, http.StatusOK, newDistroResponse(d))
 }
 
 func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
@@ -203,5 +204,5 @@ func (s *Server) deleteDistro(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusNoContent, nil)
+	return response.Success(w, http.StatusNoContent, nil)
 }

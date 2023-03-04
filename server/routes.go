@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/evanebb/gobble/auth"
+	"github.com/evanebb/gobble/api/auth"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

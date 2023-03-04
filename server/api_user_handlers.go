@@ -3,7 +3,8 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"github.com/evanebb/gobble/auth"
+	"github.com/evanebb/gobble/api/auth"
+	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/repository"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -49,7 +50,7 @@ func (s *Server) getUsers(w http.ResponseWriter, r *http.Request) error {
 		resp = append(resp, newUserResponse(a))
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, resp)
+	return response.Success(w, http.StatusOK, resp)
 }
 
 func (s *Server) getUser(w http.ResponseWriter, r *http.Request) error {
@@ -66,7 +67,7 @@ func (s *Server) getUser(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newUserResponse(a))
+	return response.Success(w, http.StatusOK, newUserResponse(a))
 }
 
 func (s *Server) createUser(w http.ResponseWriter, r *http.Request) error {
@@ -92,7 +93,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusCreated, newUserResponse(a))
+	return response.Success(w, http.StatusCreated, newUserResponse(a))
 }
 
 func (s *Server) putUser(w http.ResponseWriter, r *http.Request) error {
@@ -121,7 +122,7 @@ func (s *Server) putUser(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newUserResponse(a))
+	return response.Success(w, http.StatusOK, newUserResponse(a))
 }
 
 func (s *Server) deleteUser(w http.ResponseWriter, r *http.Request) error {
@@ -135,5 +136,5 @@ func (s *Server) deleteUser(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusNoContent, nil)
+	return response.Success(w, http.StatusNoContent, nil)
 }

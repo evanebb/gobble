@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/evanebb/gobble/auth"
+	"github.com/evanebb/gobble/api/auth"
 	"github.com/evanebb/gobble/distro"
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository/postgres"

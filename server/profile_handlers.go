@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository"
@@ -57,7 +58,7 @@ func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 		resp = append(resp, newProfileResponse(p))
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, resp)
+	return response.Success(w, http.StatusOK, resp)
 }
 
 func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
@@ -74,7 +75,7 @@ func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
+	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
@@ -103,7 +104,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusCreated, newProfileResponse(p))
+	return response.Success(w, http.StatusCreated, newProfileResponse(p))
 }
 
 func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
@@ -136,7 +137,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
+	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
@@ -184,7 +185,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	return SendSuccessResponse(w, http.StatusOK, newProfileResponse(p))
+	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
 func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
@@ -199,5 +200,5 @@ func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// No data to return, just pass nil
-	return SendSuccessResponse(w, http.StatusNoContent, nil)
+	return response.Success(w, http.StatusNoContent, nil)
 }
