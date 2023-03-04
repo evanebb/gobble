@@ -1,15 +1,3 @@
-DROP TABLE IF EXISTS distro;
-CREATE TABLE distro
-(
-    id               serial PRIMARY KEY,
-    uuid             uuid UNIQUE,
-    name             varchar(64) UNIQUE,
-    description      varchar(128),
-    kernel           varchar(128),
-    initrd           varchar(128),
-    kernelParameters varchar(128)[]
-);
-
 DROP TABLE IF EXISTS profile;
 CREATE TABLE profile
 (
@@ -17,7 +5,8 @@ CREATE TABLE profile
     uuid             uuid UNIQUE,
     name             varchar(64) UNIQUE,
     description      varchar(128),
-    distro           uuid REFERENCES distro (uuid) ON DELETE CASCADE,
+    kernel           varchar(128),
+    initrd           varchar(128),
     kernelParameters varchar(128)[]
 );
 

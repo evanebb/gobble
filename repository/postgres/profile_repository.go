@@ -24,14 +24,15 @@ type postgresProfile struct {
 	UUID             uuid.UUID
 	Name             string
 	Description      string
-	Distro           uuid.UUID
+	Kernel           string
+	Initrd           string
 	KernelParameters []string
 }
 
 func (r ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 	var profiles []profile.Profile
 
-	stmt := "SELECT id, uuid, name, description, distro, kernelParameters FROM profile"
+	stmt := "SELECT id, uuid, name, description, kernel, initrd, kernelParameters FROM profile"
 	rows, err := r.db.Query(context.Background(), stmt)
 	if err != nil {
 		return profiles, err
@@ -41,7 +42,7 @@ func (r ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 		var pr profile.Profile
 		var pp postgresProfile
 
-		err = rows.Scan(&pp.Id, &pp.UUID, &pp.Name, &pp.Description, &pp.Distro, &pp.KernelParameters)
+		err = rows.Scan(&pp.Id, &pp.UUID, &pp.Name, &pp.Description, &pp.Kernel, &pp.Initrd, &pp.KernelParameters)
 		if err != nil {
 			return profiles, err
 		}
@@ -51,7 +52,7 @@ func (r ProfileRepository) GetProfiles() ([]profile.Profile, error) {
 			return profiles, err
 		}
 
-		pr, err = profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp)
+		pr, err = profile.New(pp.UUID, pp.Name, pp.Description, pp.Kernel, pp.Initrd, kp)
 		if err != nil {
 			return profiles, err
 		}
@@ -66,8 +67,8 @@ func (r ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error)
 	var pr profile.Profile
 	var pp postgresProfile
 
-	stmt := "SELECT id, uuid, name, description, distro, kernelParameters FROM profile WHERE uuid = $1"
-	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pp.Id, &pp.UUID, &pp.Name, &pp.Description, &pp.Distro, &pp.KernelParameters)
+	stmt := "SELECT id, uuid, name, description, kernel, initrd, kernelParameters FROM profile WHERE uuid = $1"
+	err := r.db.QueryRow(context.Background(), stmt, id).Scan(&pp.Id, &pp.UUID, &pp.Name, &pp.Description, &pp.Kernel, &pp.Initrd, &pp.KernelParameters)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return pr, repository.ErrNotFound
@@ -81,12 +82,12 @@ func (r ProfileRepository) GetProfileById(id uuid.UUID) (profile.Profile, error)
 		return pr, err
 	}
 
-	return profile.New(pp.UUID, pp.Name, pp.Description, pp.Distro, kp)
+	return profile.New(pp.UUID, pp.Name, pp.Description, pp.Kernel, pp.Initrd, kp)
 }
 
 func (r ProfileRepository) SetProfile(p profile.Profile) error {
-	stmt := "INSERT INTO profile (uuid, name, description, distro, kernelParameters) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, distro = $4, kernelParameters = $5"
-	_, err := r.db.Exec(context.Background(), stmt, p.Id, p.Name, p.Description, p.Distro, kernelparameters.FormatKernelParameters(p.KernelParameters))
+	stmt := "INSERT INTO profile (uuid, name, description, kernel, initrd, kernelParameters) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (uuid) DO UPDATE set name = $2, description = $3, kernel = $4, initrd = $5, kernelParameters = $6"
+	_, err := r.db.Exec(context.Background(), stmt, p.Id, p.Name, p.Description, p.Kernel, p.Initrd, kernelparameters.FormatKernelParameters(p.KernelParameters))
 	if err != nil {
 		return err
 	}

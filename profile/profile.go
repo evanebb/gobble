@@ -11,14 +11,23 @@ type Profile struct {
 	Id               uuid.UUID
 	Name             string
 	Description      string
-	Distro           uuid.UUID
+	Kernel           string
+	Initrd           string
 	KernelParameters kernelparameters.KernelParameters
 }
 
-func New(id uuid.UUID, name string, description string, distro uuid.UUID, kernelParameters kernelparameters.KernelParameters) (Profile, error) {
+func New(id uuid.UUID, name string, description string, kernel string, initrd string, kernelParameters kernelparameters.KernelParameters) (Profile, error) {
 	var p Profile
 
 	if err := validateName(name); err != nil {
+		return p, err
+	}
+
+	if err := validateKernel(kernel); err != nil {
+		return p, err
+	}
+
+	if err := validateInitrd(initrd); err != nil {
 		return p, err
 	}
 
@@ -26,7 +35,8 @@ func New(id uuid.UUID, name string, description string, distro uuid.UUID, kernel
 		Id:               id,
 		Name:             name,
 		Description:      description,
-		Distro:           distro,
+		Kernel:           kernel,
+		Initrd:           initrd,
 		KernelParameters: kernelParameters,
 	}, nil
 }
@@ -40,6 +50,40 @@ func validateName(name string) error {
 
 	if !matched {
 		return errors.New("name contains illegal characters")
+	}
+
+	return nil
+}
+
+func validateKernel(kernel string) error {
+	if kernel == "" {
+		return errors.New("kernel cannot be empty")
+	}
+
+	p := "\\s"
+	matched, err := regexp.MatchString(p, kernel)
+	if err != nil {
+		return err
+	}
+	if matched {
+		return errors.New("kernel contains illegal characters")
+	}
+
+	return nil
+}
+
+func validateInitrd(initrd string) error {
+	if initrd == "" {
+		return errors.New("initrd cannot be empty")
+	}
+
+	p := "\\s"
+	matched, err := regexp.MatchString(p, initrd)
+	if err != nil {
+		return err
+	}
+	if matched {
+		return errors.New("initrd contains illegal characters")
 	}
 
 	return nil

@@ -241,13 +241,8 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
-	d, err := s.distroRepo.GetDistroById(p.Distro)
-	if err != nil {
-		return NewHTTPError(err, http.StatusInternalServerError)
-	}
-
-	kp := kernelparameters.MergeKernelParameters(d.KernelParameters, p.KernelParameters, sys.KernelParameters)
-	pxeConfig := system.NewPxeConfig(d.Kernel, d.Initrd, kp)
+	kp := kernelparameters.MergeKernelParameters(p.KernelParameters, sys.KernelParameters)
+	pxeConfig := system.NewPxeConfig(p.Kernel, p.Initrd, kp)
 
 	return response.PlainText(w, http.StatusOK, pxeConfig.Render())
 }

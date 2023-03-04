@@ -14,18 +14,6 @@ func (s *Server) routes() {
 		r.Use(auth.BasicAuth(s.apiUserRepo))
 		r.NotFound(errorHandler(unknownEndpointHandler))
 
-		r.Route("/distros", func(r chi.Router) {
-			r.Get("/", errorHandler(s.getDistros))
-			r.Post("/", errorHandler(s.createDistro))
-
-			r.Route("/{uuid}", func(r chi.Router) {
-				r.Get("/", errorHandler(s.getDistro))
-				r.Put("/", errorHandler(s.putDistro))
-				r.Patch("/", errorHandler(s.patchDistro))
-				r.Delete("/", errorHandler(s.deleteDistro))
-			})
-		})
-
 		r.Route("/profiles", func(r chi.Router) {
 			r.Get("/", errorHandler(s.getProfiles))
 			r.Post("/", errorHandler(s.createProfile))

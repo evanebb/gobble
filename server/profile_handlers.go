@@ -17,10 +17,11 @@ import (
 
 // profileRequest is the JSON representation of a profile.Profile that is accepted by the API.
 type profileRequest struct {
-	Name             string    `json:"name"`
-	Description      string    `json:"description"`
-	Distro           uuid.UUID `json:"distro"`
-	KernelParameters []string  `json:"kernelParameters"`
+	Name             string   `json:"name"`
+	Description      string   `json:"description"`
+	Kernel           string   `json:"kernel"`
+	Initrd           string   `json:"initrd"`
+	KernelParameters []string `json:"kernelParameters"`
 }
 
 // profileResponse is the JSON representation of a profile.Profile that is returned by the API.
@@ -28,7 +29,8 @@ type profileResponse struct {
 	Id               uuid.UUID `json:"id"`
 	Name             string    `json:"name"`
 	Description      string    `json:"description"`
-	Distro           uuid.UUID `json:"distro"`
+	Kernel           string    `json:"kernel"`
+	Initrd           string    `json:"initrd"`
 	KernelParameters []string  `json:"kernelParameters"`
 }
 
@@ -38,7 +40,8 @@ func newProfileResponse(p profile.Profile) profileResponse {
 		Id:               p.Id,
 		Name:             p.Name,
 		Description:      p.Description,
-		Distro:           p.Distro,
+		Kernel:           p.Kernel,
+		Initrd:           p.Initrd,
 		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
 	}
 }
@@ -94,7 +97,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	p, err := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err := profile.New(profileId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -127,7 +130,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	p, err := profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err := profile.New(profileId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -155,7 +158,8 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	req := profileRequest{
 		Name:             p.Name,
 		Description:      p.Description,
-		Distro:           p.Distro,
+		Kernel:           p.Kernel,
+		Initrd:           p.Initrd,
 		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
 	}
 
@@ -175,7 +179,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Map the DTO back to the model, this time with the newly supplied values from the request body
-	p, err = profile.New(profileId, req.Name, req.Description, req.Distro, kp)
+	p, err = profile.New(profileId, req.Name, req.Description, req.Kernel, req.Initrd, kp)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

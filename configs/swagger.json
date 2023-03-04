@@ -11,34 +11,6 @@
     }
   ],
   "paths": {
-    "/distros": {
-      "get": {
-        "responses": {
-        }
-      },
-      "post": {
-        "responses": {
-        }
-      }
-    },
-    "/distros/{distroID}": {
-      "get": {
-        "responses": {
-        }
-      },
-      "put": {
-        "responses": {
-        }
-      },
-      "patch": {
-        "responses": {
-        }
-      },
-      "delete": {
-        "responses": {
-        }
-      }
-    },
     "/profiles": {
       "get": {
         "responses": {
