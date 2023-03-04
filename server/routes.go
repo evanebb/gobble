@@ -11,10 +11,10 @@ func (s *Server) routes() {
 
 	s.router.Get("/", errorHandler(indexHandler))
 	s.router.Route("/api", func(r chi.Router) {
-		r.Use(auth.BasicAuth(s.apiUserRepo))
 		r.NotFound(errorHandler(unknownEndpointHandler))
 
 		r.Route("/profiles", func(r chi.Router) {
+			r.Use(auth.BasicAuth(s.apiUserRepo))
 			r.Get("/", errorHandler(s.getProfiles))
 			r.Post("/", errorHandler(s.createProfile))
 
@@ -27,6 +27,7 @@ func (s *Server) routes() {
 		})
 
 		r.Route("/systems", func(r chi.Router) {
+			r.Use(auth.BasicAuth(s.apiUserRepo))
 			r.Get("/", errorHandler(s.getSystems))
 			r.Post("/", errorHandler(s.createSystem))
 
@@ -41,6 +42,7 @@ func (s *Server) routes() {
 		r.Get("/pxe-config", errorHandler(s.getPxeConfig))
 
 		r.Route("/users", func(r chi.Router) {
+			r.Use(auth.BasicAuth(s.apiUserRepo))
 			r.Get("/", errorHandler(s.getUsers))
 			r.Post("/", errorHandler(s.createUser))
 
