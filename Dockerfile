@@ -5,7 +5,7 @@ COPY . .
 RUN go mod download
 RUN go build -o ./bin/gobble ./cmd/gobble
 
-FROM alpine:3.17
+FROM alpine:3.18
 
 COPY --from=build /app/bin/gobble /usr/local/bin/gobble
 
