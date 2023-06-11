@@ -1,5 +1,6 @@
 ![Build and test](https://github.com/evanebb/gobble/actions/workflows/go.yml/badge.svg)
 # gobble
+:warning: **This project is made for fun and learning purposes. As such, the code quality or support cannot be guaranteed.** :warning:
 
 A small REST API to manage and generate iPXE configs, and match them to specific clients using their MAC address.
 
