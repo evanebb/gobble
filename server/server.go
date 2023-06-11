@@ -39,7 +39,7 @@ func NewServer() (Server, error) {
 	cs := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", user, pass, host, port, database)
 	db, err := pgxpool.New(context.Background(), cs)
 	if err != nil {
-		log.Fatal(err)
+		return s, err
 	}
 
 	ar, err := postgres.NewApiUserRepository(db)
