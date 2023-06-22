@@ -231,7 +231,7 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 	sys, err := s.systemRepo.GetSystemByMacAddress(mac)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
-			return NewHTTPError(err, http.StatusNotFound)
+			return response.PlainText(w, http.StatusNotFound, system.RenderNotFound())
 		}
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
