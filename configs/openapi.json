@@ -587,7 +587,7 @@
         "parameters": [
           {
             "in": "query",
-            "name": "macAddress",
+            "name": "mac",
             "schema": {
               "type": "string",
               "example": "11:22:33:44:55"
