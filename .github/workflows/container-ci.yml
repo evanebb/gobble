@@ -20,6 +20,16 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
+        name: Set up Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/evanebb/gobble
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
@@ -40,4 +50,5 @@ jobs:
           context: .
           push: true
           provenance: false
-          tags: ghcr.io/evanebb/gobble:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
