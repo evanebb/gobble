@@ -4,6 +4,8 @@
 
 A small REST API to manage and generate iPXE configs, and match them to specific clients using their MAC address.
 
+Check out the [quickstart article on the wiki](https://github.com/evanebb/gobble/wiki/Quickstart) for an example setup.
+
 # General concepts
 
 - Simple REST API to create, assign and delete profiles and systems.
