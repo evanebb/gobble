@@ -233,7 +233,8 @@ func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
 		if errors.Is(err, repository.ErrNotFound) {
 			return response.PlainText(w, http.StatusNotFound, system.RenderNotFound())
 		}
-		return NewHTTPError(err, http.StatusInternalServerError)
+		// This should be a 404, but iPXE won't load the script if that is the response code
+		return NewHTTPError(err, http.StatusOK)
 	}
 
 	p, err := s.profileRepo.GetProfileById(sys.Profile)
