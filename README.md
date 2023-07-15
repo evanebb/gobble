@@ -7,18 +7,16 @@ A small REST API to manage and generate iPXE configs, and match them to specific
 Check out the [quickstart article on the wiki](https://github.com/evanebb/gobble/wiki/Quickstart) for an example setup.
 
 # General concepts
-
 - Simple REST API to create, assign and delete profiles and systems.
-- Uses the iPXE configuration language.
-- Does not provide a DHCP, TFTP server or iPXE. Those will have to be set up separately, and pointed to this application.
-- Can be deployed in addition to your existing netboot infrastructure.
+- Uses the iPXE scripting language.
+- Does not include a DHCP, TFTP server or iPXE firmware. Those will have to be set up separately, giving you the flexibility to choose whatever you want or already have.
 
 # Process
-
-- DHCP server instructs client to chainload iPXE, points to TFTP server
-- TFTP server only contains the iPXE rom(s)
-- Server loads the iPXE rom and starts PXE booting again
-- DHCP server sees that client has now loaded iPXE and points it to this application; an example URL would be http://gobble.example.local/api/pxe-config?mac=$servermac
-- The application retrieves the system using the provided MAC address, and renders the iPXE config on the fly from the profile assigned to it and returns it
+- A client powers on, and decides/is configured to boot from the network.
+- The DHCP server instructs the client to chainload iPXE, and points it towards the TFTP server.
+- The TFTP server serves the iPXE firmware to the client.
+- The client loads the iPXE firmware, starts PXE booting again and starts sending DHCP requests.
+- The DHCP server sees that the client has now loaded iPXE, and points it towards Gobble to retrieve an iPXE script; an example URL would be http://gobble.example.local/api/pxe-config?mac=$servermac
+- Gobble looks up the registered system using the provided MAC address, and renders the iPXE config on the fly from the profile assigned to it.
 - This config contains the kernel, initrd and custom kernel parameters that were assigned. This points to a TFTP, HTTP, NFS, etc. server, which is all out of the control of this application.
 - Done!
