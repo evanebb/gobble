@@ -1,4 +1,4 @@
-package server
+package handlers
 
 type HTTPError struct {
 	err        error

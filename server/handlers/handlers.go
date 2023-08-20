@@ -1,11 +1,8 @@
-package server
+package handlers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/evanebb/gobble/api/response"
-	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
 )
@@ -14,7 +11,7 @@ var fatalErrorMsg = "something really bad happened, please check the logs!"
 
 type ErrorHandlerFunc func(w http.ResponseWriter, r *http.Request) error
 
-func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
+func ErrorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := h(w, r)
 		if err == nil {
@@ -49,21 +46,11 @@ func errorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 	}
 }
 
-func unknownEndpointHandler(w http.ResponseWriter, r *http.Request) error {
+func UnknownEndpointHandler(w http.ResponseWriter, r *http.Request) error {
 	return response.Error(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints")
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) error {
+func IndexHandler(w http.ResponseWriter, r *http.Request) error {
 	html := "<h1>Welcome to gobble!</h1><p>Refer to the documentation for the available API endpoints.</p>"
 	return response.HTML(w, http.StatusOK, html)
-}
-
-// getUUIDFromRequest gets and parses the UUID from the request. If it's not a valid UUID, an error is returned.
-func getUUIDFromRequest(r *http.Request) (uuid.UUID, error) {
-	uuidString := chi.URLParam(r, "uuid")
-	UUID, err := uuid.Parse(uuidString)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("[%s] is not a valid UUID: [%w]", uuidString, err)
-	}
-	return UUID, nil
 }

@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"encoding/json"
@@ -48,11 +48,19 @@ func newSystemResponse(sys system.System) systemResponse {
 }
 
 /*
- * The actual HTTP handlers
+ * HTTP handlers
  */
 
-func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
-	systems, err := s.systemRepo.GetSystems()
+type SystemHandlerGroup struct {
+	systemRepo system.Repository
+}
+
+func NewSystemHandlerGroup(sr system.Repository) SystemHandlerGroup {
+	return SystemHandlerGroup{sr}
+}
+
+func (h SystemHandlerGroup) GetSystems(w http.ResponseWriter, r *http.Request) error {
+	systems, err := h.systemRepo.GetSystems()
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -65,13 +73,13 @@ func (s *Server) getSystems(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, resp)
 }
 
-func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
+func (h SystemHandlerGroup) GetSystem(w http.ResponseWriter, r *http.Request) error {
 	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	sys, err := s.systemRepo.GetSystemById(systemId)
+	sys, err := h.systemRepo.GetSystemById(systemId)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return NewHTTPError(err, http.StatusNotFound)
@@ -82,7 +90,7 @@ func (s *Server) getSystem(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
-func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
+func (h SystemHandlerGroup) CreateSystem(w http.ResponseWriter, r *http.Request) error {
 	var req systemRequest
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
@@ -108,7 +116,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.systemRepo.SetSystem(sys)
+	err = h.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -116,7 +124,7 @@ func (s *Server) createSystem(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusCreated, newSystemResponse(sys))
 }
 
-func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
+func (h SystemHandlerGroup) PutSystem(w http.ResponseWriter, r *http.Request) error {
 	var req systemRequest
 
 	systemId, err := getUUIDFromRequest(r)
@@ -146,7 +154,7 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.systemRepo.SetSystem(sys)
+	err = h.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -154,14 +162,14 @@ func (s *Server) putSystem(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
-func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
+func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) error {
 	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Get and map the current system to the API DTO
-	sys, err := s.systemRepo.GetSystemById(systemId)
+	sys, err := h.systemRepo.GetSystemById(systemId)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -200,7 +208,7 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.systemRepo.SetSystem(sys)
+	err = h.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -208,42 +216,16 @@ func (s *Server) patchSystem(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newSystemResponse(sys))
 }
 
-func (s *Server) deleteSystem(w http.ResponseWriter, r *http.Request) error {
+func (h SystemHandlerGroup) DeleteSystem(w http.ResponseWriter, r *http.Request) error {
 	systemId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.systemRepo.DeleteSystemById(systemId)
+	err = h.systemRepo.DeleteSystemById(systemId)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
 
 	return response.Success(w, http.StatusNoContent, nil)
-}
-
-func (s *Server) getPxeConfig(w http.ResponseWriter, r *http.Request) error {
-	mac, err := net.ParseMAC(r.URL.Query().Get("mac"))
-	if err != nil {
-		return NewHTTPError(err, http.StatusBadRequest)
-	}
-
-	sys, err := s.systemRepo.GetSystemByMacAddress(mac)
-	if err != nil {
-		if errors.Is(err, repository.ErrNotFound) {
-			return response.PlainText(w, http.StatusNotFound, system.RenderNotFound())
-		}
-		// This should be a 404, but iPXE won't load the script if that is the response code
-		return NewHTTPError(err, http.StatusOK)
-	}
-
-	p, err := s.profileRepo.GetProfileById(sys.Profile)
-	if err != nil {
-		return NewHTTPError(err, http.StatusInternalServerError)
-	}
-
-	kp := kernelparameters.MergeKernelParameters(p.KernelParameters, sys.KernelParameters)
-	pxeConfig := system.NewPxeConfig(p.Kernel, p.Initrd, kp)
-
-	return response.PlainText(w, http.StatusOK, pxeConfig.Render())
 }
