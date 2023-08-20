@@ -51,6 +51,7 @@ func newSystemResponse(sys system.System) systemResponse {
  * HTTP handlers
  */
 
+// SystemHandlerGroup is a group of http.HandlerFunc functions related to systems
 type SystemHandlerGroup struct {
 	systemRepo system.Repository
 }

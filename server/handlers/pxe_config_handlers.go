@@ -11,6 +11,11 @@ import (
 	"net/http"
 )
 
+/*
+ * HTTP handlers
+ */
+
+// PxeConfigHandlerGroup is a group of http.HandlerFunc functions related to PXE configs
 type PxeConfigHandlerGroup struct {
 	systemRepo  system.Repository
 	profileRepo profile.Repository

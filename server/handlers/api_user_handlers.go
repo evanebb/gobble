@@ -36,9 +36,10 @@ func newUserResponse(a auth.ApiUser) userResponse {
 }
 
 /*
- * The actual HTTP handlers
+ * HTTP handlers
  */
 
+// ApiUserHandlerGroup is a group of http.HandlerFunc functions related to API users
 type ApiUserHandlerGroup struct {
 	apiUserRepo auth.ApiUserRepository
 }
