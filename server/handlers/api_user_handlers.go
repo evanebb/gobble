@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"encoding/json"
@@ -36,11 +36,20 @@ func newUserResponse(a auth.ApiUser) userResponse {
 }
 
 /*
- * The actual HTTP handlers
+ * HTTP handlers
  */
 
-func (s *Server) getUsers(w http.ResponseWriter, r *http.Request) error {
-	users, err := s.apiUserRepo.GetApiUsers()
+// ApiUserHandlerGroup is a group of http.HandlerFunc functions related to API users
+type ApiUserHandlerGroup struct {
+	apiUserRepo auth.ApiUserRepository
+}
+
+func NewApiUserHandlerGroup(ar auth.ApiUserRepository) ApiUserHandlerGroup {
+	return ApiUserHandlerGroup{ar}
+}
+
+func (h ApiUserHandlerGroup) GetUsers(w http.ResponseWriter, r *http.Request) error {
+	users, err := h.apiUserRepo.GetApiUsers()
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -53,13 +62,13 @@ func (s *Server) getUsers(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, resp)
 }
 
-func (s *Server) getUser(w http.ResponseWriter, r *http.Request) error {
+func (h ApiUserHandlerGroup) GetUser(w http.ResponseWriter, r *http.Request) error {
 	userID, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	a, err := s.apiUserRepo.GetApiUserById(userID)
+	a, err := h.apiUserRepo.GetApiUserById(userID)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return NewHTTPError(err, http.StatusNotFound)
@@ -70,7 +79,7 @@ func (s *Server) getUser(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newUserResponse(a))
 }
 
-func (s *Server) createUser(w http.ResponseWriter, r *http.Request) error {
+func (h ApiUserHandlerGroup) CreateUser(w http.ResponseWriter, r *http.Request) error {
 	var req userRequest
 
 	decoder := json.NewDecoder(r.Body)
@@ -88,7 +97,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	a := auth.NewApiUser(userID, req.Name, pass)
-	err = s.apiUserRepo.SetApiUser(a)
+	err = h.apiUserRepo.SetApiUser(a)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -96,7 +105,7 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusCreated, newUserResponse(a))
 }
 
-func (s *Server) putUser(w http.ResponseWriter, r *http.Request) error {
+func (h ApiUserHandlerGroup) PutUser(w http.ResponseWriter, r *http.Request) error {
 	var req userRequest
 
 	userID, err := getUUIDFromRequest(r)
@@ -117,7 +126,7 @@ func (s *Server) putUser(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	a := auth.NewApiUser(userID, req.Name, pass)
-	err = s.apiUserRepo.SetApiUser(a)
+	err = h.apiUserRepo.SetApiUser(a)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -125,13 +134,13 @@ func (s *Server) putUser(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newUserResponse(a))
 }
 
-func (s *Server) deleteUser(w http.ResponseWriter, r *http.Request) error {
+func (h ApiUserHandlerGroup) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 	userID, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.apiUserRepo.DeleteApiUserById(userID)
+	err = h.apiUserRepo.DeleteApiUserById(userID)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}

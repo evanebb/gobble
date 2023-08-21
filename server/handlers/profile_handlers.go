@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"encoding/json"
@@ -47,11 +47,20 @@ func newProfileResponse(p profile.Profile) profileResponse {
 }
 
 /*
- * The actual HTTP handlers
+ * HTTP handlers
  */
 
-func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
-	profiles, err := s.profileRepo.GetProfiles()
+// ProfileHandlerGroup is a group of http.HandlerFunc functions related to profiles
+type ProfileHandlerGroup struct {
+	profileRepo profile.Repository
+}
+
+func NewProfileHandlerGroup(pr profile.Repository) ProfileHandlerGroup {
+	return ProfileHandlerGroup{pr}
+}
+
+func (h ProfileHandlerGroup) GetProfiles(w http.ResponseWriter, r *http.Request) error {
+	profiles, err := h.profileRepo.GetProfiles()
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -64,13 +73,13 @@ func (s *Server) getProfiles(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, resp)
 }
 
-func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
+func (h ProfileHandlerGroup) GetProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	p, err := s.profileRepo.GetProfileById(profileId)
+	p, err := h.profileRepo.GetProfileById(profileId)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return NewHTTPError(err, http.StatusNotFound)
@@ -81,7 +90,7 @@ func (s *Server) getProfile(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
-func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
+func (h ProfileHandlerGroup) CreateProfile(w http.ResponseWriter, r *http.Request) error {
 	var req profileRequest
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
@@ -102,7 +111,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.profileRepo.SetProfile(p)
+	err = h.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -110,7 +119,7 @@ func (s *Server) createProfile(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusCreated, newProfileResponse(p))
 }
 
-func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
+func (h ProfileHandlerGroup) PutProfile(w http.ResponseWriter, r *http.Request) error {
 	var req profileRequest
 
 	profileId, err := getUUIDFromRequest(r)
@@ -135,7 +144,7 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.profileRepo.SetProfile(p)
+	err = h.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -143,14 +152,14 @@ func (s *Server) putProfile(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
-func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
+func (h ProfileHandlerGroup) PatchProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
 	// Get and map the current profile to the API DTO
-	p, err := s.profileRepo.GetProfileById(profileId)
+	p, err := h.profileRepo.GetProfileById(profileId)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -184,7 +193,7 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.profileRepo.SetProfile(p)
+	err = h.profileRepo.SetProfile(p)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
@@ -192,13 +201,13 @@ func (s *Server) patchProfile(w http.ResponseWriter, r *http.Request) error {
 	return response.Success(w, http.StatusOK, newProfileResponse(p))
 }
 
-func (s *Server) deleteProfile(w http.ResponseWriter, r *http.Request) error {
+func (h ProfileHandlerGroup) DeleteProfile(w http.ResponseWriter, r *http.Request) error {
 	profileId, err := getUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	err = s.profileRepo.DeleteProfileById(profileId)
+	err = h.profileRepo.DeleteProfileById(profileId)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
 	}
