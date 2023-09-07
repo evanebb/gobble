@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type Server struct {
@@ -64,5 +63,5 @@ func NewServer() (Server, error) {
 func (s *Server) Run() {
 	log.Println("starting API...")
 	s.routes()
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(s.config.httpPort), s.router))
+	log.Fatal(http.ListenAndServe(s.config.listenAddress, s.router))
 }

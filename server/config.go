@@ -10,12 +10,12 @@ import (
 var ErrIncompleteDatabaseCredentials = errors.New("incomplete or no database credentials supplied")
 
 type AppConfig struct {
-	dbUser   string
-	dbPass   string
-	dbHost   string
-	dbName   string
-	dbPort   int
-	httpPort int
+	dbUser        string
+	dbPass        string
+	dbHost        string
+	dbName        string
+	dbPort        int
+	listenAddress string
 }
 
 func NewAppConfig() (AppConfig, error) {
@@ -24,7 +24,7 @@ func NewAppConfig() (AppConfig, error) {
 
 	// Default values if applicable
 	a.dbPort = 5432
-	a.httpPort = 80
+	a.listenAddress = ":80"
 
 	// Parse environment variables
 	a.dbUser = os.Getenv("GOBBLE_DB_USER")
@@ -38,12 +38,10 @@ func NewAppConfig() (AppConfig, error) {
 			return a, err
 		}
 	}
-	httpPortString := os.Getenv("GOBBLE_HTTP_PORT")
-	if httpPortString != "" {
-		a.httpPort, err = strconv.Atoi(httpPortString)
-		if err != nil {
-			return a, err
-		}
+
+	listenAddress := os.Getenv("GOBBLE_LISTEN_ADDRESS")
+	if listenAddress != "" {
+		a.listenAddress = listenAddress
 	}
 
 	// Parse command line flags
@@ -51,8 +49,8 @@ func NewAppConfig() (AppConfig, error) {
 	flag.StringVar(&a.dbPass, "db-pass", a.dbPass, "the database password")
 	flag.StringVar(&a.dbHost, "db-host", a.dbHost, "the database host")
 	flag.StringVar(&a.dbName, "db-name", a.dbHost, "the database to use")
-	flag.IntVar(&a.dbPort, "db-port", a.dbPort, "the database port to connect to, defaults to 5432")
-	flag.IntVar(&a.httpPort, "http-port", a.httpPort, "the HTTP port to use for the application, defaults to 80")
+	flag.IntVar(&a.dbPort, "db-port", a.dbPort, "the database port to connect to")
+	flag.StringVar(&a.listenAddress, "listen-address", a.listenAddress, "the address that the application should listen on")
 	flag.Parse()
 
 	if a.dbUser == "" || a.dbPass == "" || a.dbHost == "" || a.dbName == "" {
