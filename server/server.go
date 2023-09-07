@@ -36,6 +36,10 @@ func NewServer() (Server, error) {
 		return s, err
 	}
 
+	if err = db.Ping(context.Background()); err != nil {
+		return s, err
+	}
+
 	ar, err := postgres.NewApiUserRepository(db)
 	if err != nil {
 		return s, err
