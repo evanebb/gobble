@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/go-chi/chi/v5 v5.0.10
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/jackc/pgx/v5 v5.4.3
 	golang.org/x/crypto v0.12.0
 )
