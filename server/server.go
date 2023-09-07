@@ -11,8 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
 )
 
 type Server struct {
@@ -20,23 +18,19 @@ type Server struct {
 	profileRepo profile.Repository
 	systemRepo  system.Repository
 	router      chi.Router
+	config      AppConfig
 }
 
 func NewServer() (Server, error) {
 	var s Server
 
-	// FIXME: proper configuration handling
-	user := os.Getenv("DB_USER")
-	pass := os.Getenv("DB_PASS")
-	host := os.Getenv("DB_HOST")
-	database := os.Getenv("DB_NAME")
-	portStr := os.Getenv("DB_PORT")
-	port, err := strconv.Atoi(portStr)
+	var err error
+	s.config, err = NewAppConfig()
 	if err != nil {
-		log.Fatal(err)
+		return s, err
 	}
 
-	cs := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", user, pass, host, port, database)
+	cs := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", s.config.dbUser, s.config.dbPass, s.config.dbHost, s.config.dbPort, s.config.dbName)
 	db, err := pgxpool.New(context.Background(), cs)
 	if err != nil {
 		return s, err
@@ -69,5 +63,5 @@ func NewServer() (Server, error) {
 func (s *Server) Run() {
 	log.Println("starting API...")
 	s.routes()
-	log.Fatal(http.ListenAndServe(":80", s.router))
+	log.Fatal(http.ListenAndServe(s.config.listenAddress, s.router))
 }
