@@ -9,11 +9,10 @@ services:
     ports:
       - "80:80/tcp"
     environment:
-      DB_USER: gobble
-      DB_PASS: Welkom123!
-      DB_HOST: database
-      DB_NAME: gobble
-      DB_PORT: 5432
+      GOBBLE_DB_USER: gobble
+      GOBBLE_DB_PASS: Welkom123!
+      GOBBLE_DB_HOST: database
+      GOBBLE_DB_NAME: gobble
 
   database:
     image: postgres:15
