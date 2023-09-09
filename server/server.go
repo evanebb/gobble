@@ -67,5 +67,9 @@ func NewServer() (Server, error) {
 func (s *Server) Run() {
 	log.Println("starting API...")
 	s.routes()
-	log.Fatal(http.ListenAndServe(s.config.listenAddress, s.router))
+	if s.config.httpsEnabled {
+		log.Fatal(http.ListenAndServeTLS(s.config.listenAddress, s.config.httpsCertFile, s.config.httpsKeyFile, s.router))
+	} else {
+		log.Fatal(http.ListenAndServe(s.config.listenAddress, s.router))
+	}
 }
