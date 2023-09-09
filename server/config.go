@@ -27,7 +27,6 @@ func NewAppConfig() (AppConfig, error) {
 
 	// Default values if applicable
 	a.dbPort = 5432
-	a.listenAddress = ":80"
 
 	// Parse environment variables
 	a.dbUser = os.Getenv("GOBBLE_DB_USER")
@@ -63,6 +62,22 @@ func NewAppConfig() (AppConfig, error) {
 
 	if a.dbUser == "" || a.dbPass == "" || a.dbHost == "" || a.dbName == "" {
 		return a, ErrIncompleteDatabaseCredentials
+	}
+
+	// If both a certificate and corresponding key file path have been passed, HTTPS will be enabled
+	if a.httpsCertFile != "" && a.httpsKeyFile != "" {
+		a.httpsEnabled = true
+	} else {
+		a.httpsEnabled = false
+	}
+
+	// If no listen address has been passed, set an appropriate default depending on whether HTTPS has been enabled
+	if a.listenAddress == "" {
+		if a.httpsEnabled {
+			a.listenAddress = ":443"
+		} else {
+			a.listenAddress = ":80"
+		}
 	}
 
 	return a, nil
