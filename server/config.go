@@ -15,6 +15,9 @@ type AppConfig struct {
 	dbHost        string
 	dbName        string
 	dbPort        int
+	httpsEnabled  bool
+	httpsCertFile string
+	httpsKeyFile  string
 	listenAddress string
 }
 
@@ -39,6 +42,9 @@ func NewAppConfig() (AppConfig, error) {
 		}
 	}
 
+	a.httpsCertFile = os.Getenv("GOBBLE_HTTPS_CERT_FILE")
+	a.httpsKeyFile = os.Getenv("GOBBLE_HTTPS_KEY_FILE")
+
 	listenAddress := os.Getenv("GOBBLE_LISTEN_ADDRESS")
 	if listenAddress != "" {
 		a.listenAddress = listenAddress
@@ -50,6 +56,8 @@ func NewAppConfig() (AppConfig, error) {
 	flag.StringVar(&a.dbHost, "db-host", a.dbHost, "the database host")
 	flag.StringVar(&a.dbName, "db-name", a.dbHost, "the database to use")
 	flag.IntVar(&a.dbPort, "db-port", a.dbPort, "the database port to connect to")
+	flag.StringVar(&a.httpsCertFile, "https-cert-file", a.httpsCertFile, "the TLS certificate file to use for HTTPS")
+	flag.StringVar(&a.httpsKeyFile, "https-key-file", a.httpsKeyFile, "the TLS certificate key file to use for HTTPS")
 	flag.StringVar(&a.listenAddress, "listen-address", a.listenAddress, "the address that the application should listen on")
 	flag.Parse()
 
