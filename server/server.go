@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Server struct {
@@ -36,8 +37,20 @@ func NewServer() (Server, error) {
 		return s, err
 	}
 
-	if err = db.Ping(context.Background()); err != nil {
-		return s, err
+	start := time.Now()
+	timeout := 30 * time.Second
+
+	log.Printf("waiting %s for database...", timeout.String())
+
+	for {
+		err = db.Ping(context.Background())
+		if err == nil {
+			break
+		}
+
+		if time.Since(start) > timeout {
+			return s, err
+		}
 	}
 
 	ar, err := postgres.NewApiUserRepository(db)
