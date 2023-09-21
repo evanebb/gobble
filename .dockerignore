@@ -1,4 +1,9 @@
+.git/
+.github/
+bin/
 configs/
+.dockerignore
+.gitignore
 Dockerfile
 *.md
 LICENSE
