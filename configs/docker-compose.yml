@@ -3,7 +3,7 @@ version: "3"
 services:
   gobble:
     container_name: gobble
-    image: ghcr.io/evanebb/gobble:0.0.6
+    image: ghcr.io/evanebb/gobble:0.0.7
     build:
       context: ../
       dockerfile: Dockerfile
