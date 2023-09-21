@@ -2,6 +2,7 @@ version: "3"
 
 services:
   gobble:
+    container_name: gobble
     image: ghcr.io/evanebb/gobble:0.0.6
     build:
       context: ../
@@ -17,6 +18,7 @@ services:
       GOBBLE_DB_NAME: gobble
 
   database:
+    container_name: gobble_database
     image: postgres:15
     volumes:
       - "db_data:/var/lib/postgresql/data"
