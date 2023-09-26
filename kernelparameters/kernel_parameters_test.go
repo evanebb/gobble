@@ -83,7 +83,7 @@ func TestInvalidParameterError(t *testing.T) {
 	expectedValue := make(KernelParameters)
 
 	actualValue, err := New(v)
-	if err == nil || !errors.As(err, &actualErr) {
+	if err == nil || !errors.As(err, &actualErr) || err.Error() != "invalid kernel parameter [this is invalid] provided" {
 		t.Fatalf(`New() = %v, %v, expected: %v, %v`, actualValue, actualErr, expectedValue, expectedErr)
 	}
 }

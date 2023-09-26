@@ -28,3 +28,15 @@ func TestNewProfile(t *testing.T) {
 		t.Fatalf(`New() = %v, %v, expected: %v, nil`, actual, err, expected)
 	}
 }
+
+func TestNewProfile_InvalidName(t *testing.T) {
+	mac, err := net.ParseMAC("11:22:33:44:55:66")
+	if err != nil {
+		t.Fatalf(`New(): failed to parse MAC address`)
+	}
+
+	result, err := New(uuid.Nil, "#", "", uuid.Nil, mac, kernelparameters.KernelParameters{})
+	if err == nil || err.Error() != "name contains illegal characters" {
+		t.Fatalf("Expected New() to return error, %v received", result)
+	}
+}

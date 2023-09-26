@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestRenderPxeConfig(t *testing.T) {
+func TestPxeConfig_Render(t *testing.T) {
 	expected := `#!ipxe
 
 kernel testkernel param1
@@ -23,5 +23,19 @@ boot
 	actual := pxeConfig.Render()
 	if actual != expected {
 		t.Fatalf("PxeConfig.Render() = %v, expected %v", actual, expected)
+	}
+}
+
+func TestRenderNotFound(t *testing.T) {
+	expected := `#!ipxe
+
+echo No matching profile found for system!
+prompt --timeout 30000 Press any key or wait 30 seconds to continue ||
+
+`
+
+	actual := RenderNotFound()
+	if actual != expected {
+		t.Fatalf("RenderNotFound() = %v, expected %v", actual, expected)
 	}
 }
