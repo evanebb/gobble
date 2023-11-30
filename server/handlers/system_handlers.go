@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/kernelparameters"
+	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository"
 	"github.com/evanebb/gobble/system"
 	"github.com/google/uuid"
@@ -53,11 +55,12 @@ func newSystemResponse(sys system.System) systemResponse {
 
 // SystemHandlerGroup is a group of http.HandlerFunc functions related to systems
 type SystemHandlerGroup struct {
-	systemRepo system.Repository
+	systemRepo  system.Repository
+	profileRepo profile.Repository
 }
 
-func NewSystemHandlerGroup(sr system.Repository) SystemHandlerGroup {
-	return SystemHandlerGroup{sr}
+func NewSystemHandlerGroup(sr system.Repository, pr profile.Repository) SystemHandlerGroup {
+	return SystemHandlerGroup{sr, pr}
 }
 
 func (h SystemHandlerGroup) GetSystems(w http.ResponseWriter, r *http.Request) error {
@@ -117,6 +120,15 @@ func (h SystemHandlerGroup) CreateSystem(w http.ResponseWriter, r *http.Request)
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
+	_, err = h.profileRepo.GetProfileById(sys.Profile)
+	if err != nil {
+		wrappedErr := fmt.Errorf("error occurred while checking if the supplied profile exists: %v", err)
+		if errors.Is(err, repository.ErrNotFound) {
+			return NewHTTPError(wrappedErr, http.StatusBadRequest)
+		}
+		return NewHTTPError(wrappedErr, http.StatusInternalServerError)
+	}
+
 	err = h.systemRepo.SetSystem(sys)
 	if err != nil {
 		return NewHTTPError(err, http.StatusInternalServerError)
@@ -153,6 +165,15 @@ func (h SystemHandlerGroup) PutSystem(w http.ResponseWriter, r *http.Request) er
 	sys, err := system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
+	_, err = h.profileRepo.GetProfileById(sys.Profile)
+	if err != nil {
+		wrappedErr := fmt.Errorf("error occurred while checking if the supplied profile exists: %v", err)
+		if errors.Is(err, repository.ErrNotFound) {
+			return NewHTTPError(wrappedErr, http.StatusBadRequest)
+		}
+		return NewHTTPError(wrappedErr, http.StatusInternalServerError)
 	}
 
 	err = h.systemRepo.SetSystem(sys)
@@ -207,6 +228,15 @@ func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) 
 	sys, err = system.New(systemId, req.Name, req.Description, req.Profile, macAddress, kp)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
+	}
+
+	_, err = h.profileRepo.GetProfileById(sys.Profile)
+	if err != nil {
+		wrappedErr := fmt.Errorf("error occurred while checking if the supplied profile exists: %v", err)
+		if errors.Is(err, repository.ErrNotFound) {
+			return NewHTTPError(wrappedErr, http.StatusBadRequest)
+		}
+		return NewHTTPError(wrappedErr, http.StatusInternalServerError)
 	}
 
 	err = h.systemRepo.SetSystem(sys)

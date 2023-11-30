@@ -29,7 +29,7 @@ func (s *Server) routes() {
 		})
 
 		r.Route("/systems", func(r chi.Router) {
-			h := handlers.NewSystemHandlerGroup(s.systemRepo)
+			h := handlers.NewSystemHandlerGroup(s.systemRepo, s.profileRepo)
 
 			r.Get("/", handlers.ErrorHandler(h.GetSystems))
 			r.Post("/", handlers.ErrorHandler(h.CreateSystem))
