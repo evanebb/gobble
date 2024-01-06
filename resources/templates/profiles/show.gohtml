@@ -25,7 +25,7 @@
             <div class="mb-3">
                 <label for="kernelParameters" class="form-label">Kernel parameters</label>
                 <input type="text" disabled class="form-control" id="kernelParameters"
-                       value="{{range $key,$value := .KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+                       value="{{.KernelParameters.String}}">
             </div>
         </form>
         <form method="POST" action="/ui/profiles/{{.Id}}">

@@ -21,7 +21,8 @@
                 <select class="form-control" name="profile" id="profile">
                     {{range $profile := .Profiles}}
                         {{if eq $.System.Profile $profile.Id}}
-                            <option selected value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}}) (current)</option>
+                            <option selected value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}}) (current)
+                            </option>
                         {{else}}
                             <option value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}})</option>
                         {{end}}
@@ -35,7 +36,7 @@
             <div class="mb-3">
                 <label for="kernelParameters" class="form-label">Kernel parameters</label>
                 <input type="text" class="form-control" id="kernelParameters" name="kernelParameters"
-                       value="{{range $key,$value := .System.KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+                       value="{{.System.KernelParameters.String}}">
             </div>
             <button type="submit" class="btn btn-success">Update</button>
             <a href="/ui/systems/{{.System.Id}}" class="btn btn-danger">Cancel</a>

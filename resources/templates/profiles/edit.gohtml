@@ -26,7 +26,7 @@
             <div class="mb-3">
                 <label for="kernelParameters" class="form-label">Kernel parameters</label>
                 <input type="text" class="form-control" id="kernelParameters" name="kernelParameters"
-                       value="{{range $key,$value := .KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+                       value="{{.KernelParameters.String}}">
             </div>
             <button type="submit" class="btn btn-success">Update</button>
             <a href="/ui/profiles/{{.Id}}" class="btn btn-danger">Cancel</a>
