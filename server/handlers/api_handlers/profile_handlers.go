@@ -43,7 +43,7 @@ func newProfileResponse(p profile.Profile) profileResponse {
 		Description:      p.Description,
 		Kernel:           p.Kernel,
 		Initrd:           p.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
+		KernelParameters: p.KernelParameters.StringSlice(),
 	}
 }
 
@@ -102,7 +102,7 @@ func (h ProfileHandlerGroup) CreateProfile(w http.ResponseWriter, r *http.Reques
 
 	profileId := uuid.New()
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -135,7 +135,7 @@ func (h ProfileHandlerGroup) PutProfile(w http.ResponseWriter, r *http.Request) 
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -170,7 +170,7 @@ func (h ProfileHandlerGroup) PatchProfile(w http.ResponseWriter, r *http.Request
 		Description:      p.Description,
 		Kernel:           p.Kernel,
 		Initrd:           p.Initrd,
-		KernelParameters: kernelparameters.FormatKernelParameters(p.KernelParameters),
+		KernelParameters: p.KernelParameters.StringSlice(),
 	}
 
 	// Decode the request body into the current profile;
@@ -183,7 +183,7 @@ func (h ProfileHandlerGroup) PatchProfile(w http.ResponseWriter, r *http.Request
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

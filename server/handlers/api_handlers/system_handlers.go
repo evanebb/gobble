@@ -44,7 +44,7 @@ func newSystemResponse(sys system.System) systemResponse {
 		Description:      sys.Description,
 		Profile:          sys.Profile,
 		Mac:              sys.Mac.String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters),
+		KernelParameters: sys.KernelParameters.StringSlice(),
 	}
 }
 
@@ -103,7 +103,7 @@ func (h SystemHandlerGroup) CreateSystem(w http.ResponseWriter, r *http.Request)
 
 	systemId := uuid.New()
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -141,7 +141,7 @@ func (h SystemHandlerGroup) PutSystem(w http.ResponseWriter, r *http.Request) er
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -181,7 +181,7 @@ func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) 
 		Description:      sys.Description,
 		Profile:          sys.Profile,
 		Mac:              sys.Mac.String(),
-		KernelParameters: kernelparameters.FormatKernelParameters(sys.KernelParameters),
+		KernelParameters: sys.KernelParameters.StringSlice(),
 	}
 
 	// Decode the request body into the current system;
@@ -194,7 +194,7 @@ func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) 
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
 
-	kp, err := kernelparameters.New(req.KernelParameters)
+	kp, err := kernelparameters.ParseStringSlice(req.KernelParameters)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

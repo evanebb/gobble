@@ -3,7 +3,6 @@ package kernelparameters
 import (
 	"errors"
 	"reflect"
-	"sort"
 	"testing"
 )
 
@@ -18,31 +17,9 @@ func TestNewKernelParameters(t *testing.T) {
 		"test2": "value",
 	}
 
-	actual, err := New(v)
+	actual, err := ParseStringSlice(v)
 	if !reflect.DeepEqual(actual, expected) || err != nil {
 		t.Fatalf(`New() = %v, %v, expected: %v, nil`, actual, err, expected)
-	}
-}
-
-func TestFormatKernelParameters(t *testing.T) {
-	v := KernelParameters{
-		"test1": "",
-		"test2": "value",
-	}
-
-	expected := []string{
-		"test1",
-		"test2=value",
-	}
-
-	actual := FormatKernelParameters(v)
-
-	// Sort the slices, since the order is not guaranteed and I don't care about it either
-	sort.Strings(actual)
-	sort.Strings(expected)
-
-	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf(`FormatKernelParameters() = %v, expected: %v`, actual, expected)
 	}
 }
 
@@ -82,7 +59,7 @@ func TestInvalidParameterError(t *testing.T) {
 
 	expectedValue := make(KernelParameters)
 
-	actualValue, err := New(v)
+	actualValue, err := ParseStringSlice(v)
 	if err == nil || !errors.As(err, &actualErr) {
 		t.Fatalf(`New() = %v, %v, expected: %v, %v`, actualValue, actualErr, expectedValue, expectedErr)
 	}

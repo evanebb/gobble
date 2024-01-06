@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"net"
 	"net/http"
-	"strings"
 )
 
 func parseSystemFromPostForm(r *http.Request) (system.System, error) {
@@ -27,7 +26,7 @@ func parseSystemFromPostForm(r *http.Request) (system.System, error) {
 		}
 	}
 
-	kp, err := kernelparameters.New(strings.Split(r.PostFormValue("kernelParameters"), " "))
+	kp, err := kernelparameters.ParseString(r.PostFormValue("kernelParameters"))
 	if err != nil {
 		return s, err
 	}

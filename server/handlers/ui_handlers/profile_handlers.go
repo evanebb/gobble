@@ -7,7 +7,6 @@ import (
 	"github.com/evanebb/gobble/server/handlers"
 	"github.com/google/uuid"
 	"net/http"
-	"strings"
 )
 
 func parseProfileFromPostForm(r *http.Request) (profile.Profile, error) {
@@ -25,7 +24,7 @@ func parseProfileFromPostForm(r *http.Request) (profile.Profile, error) {
 		}
 	}
 
-	kp, err := kernelparameters.New(strings.Split(r.PostFormValue("kernelParameters"), " "))
+	kp, err := kernelparameters.ParseString(r.PostFormValue("kernelParameters"))
 	if err != nil {
 		return p, err
 	}
