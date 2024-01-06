@@ -12,7 +12,11 @@
             </div>
             <div class="mb-3">
                 <label for="profile" class="form-label">Profile</label>
-                <input type="text" class="form-control" id="profile" name="profile">
+                <select class="form-control" name="profile" id="profile">
+                    {{range $profile := .Profiles}}
+                        <option value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}})</option>
+                    {{end}}
+                </select>
             </div>
             <div class="mb-3">
                 <label for="mac" class="form-label">MAC address</label>

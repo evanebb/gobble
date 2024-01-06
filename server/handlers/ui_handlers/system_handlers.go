@@ -105,7 +105,17 @@ func (h UiSystemHandlerGroup) Show(w http.ResponseWriter, r *http.Request) {
 
 // Create shows the page for creating a new system.
 func (h UiSystemHandlerGroup) Create(w http.ResponseWriter, r *http.Request) {
-	d := templateData{Title: "Create system"}
+	profiles, err := h.profileRepo.GetProfiles()
+	if err != nil {
+		renderError(w)
+		return
+	}
+
+	d := templateData{Title: "Create system", Data: struct {
+		Profiles []profile.Profile
+	}{
+		Profiles: profiles,
+	}}
 	renderTemplate(w, "systems/create", d)
 }
 
