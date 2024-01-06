@@ -34,17 +34,15 @@ func renderTemplateErr(w io.Writer, templateName string, d templateData) error {
 func renderTemplate(w io.Writer, templateName string, d templateData) {
 	err := renderTemplateErr(w, templateName, d)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 	}
 }
 
-// renderError will render the error template with the message from the given error
-func renderError(w io.Writer, err error) {
-	data := templateData{
-		Title: "Error",
-		Data:  err.Error(),
-	}
-
+// renderError will render a generic internal server error page.
+func renderError(w io.Writer) {
 	// If we get to the point that we can't even render the error template, just do nothing
-	_ = renderTemplateErr(w, "error", data)
+	_ = renderTemplateErr(w, "errors/500", templateData{
+		Title:         "Error",
+		DisableNavbar: true,
+	})
 }

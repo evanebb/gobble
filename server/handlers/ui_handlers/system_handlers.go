@@ -65,7 +65,7 @@ func NewUiSystemHandlerGroup(sr system.Repository, pr profile.Repository) UiSyst
 func (h UiSystemHandlerGroup) Overview(w http.ResponseWriter, r *http.Request) {
 	systems, err := h.systemRepo.GetSystems()
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -77,19 +77,19 @@ func (h UiSystemHandlerGroup) Overview(w http.ResponseWriter, r *http.Request) {
 func (h UiSystemHandlerGroup) Show(w http.ResponseWriter, r *http.Request) {
 	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	s, err := h.systemRepo.GetSystemById(systemId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	p, err := h.profileRepo.GetProfileById(s.Profile)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -113,7 +113,7 @@ func (h UiSystemHandlerGroup) Create(w http.ResponseWriter, r *http.Request) {
 func (h UiSystemHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 	s, err := parseSystemFromPostForm(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (h UiSystemHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 
 	err = h.systemRepo.SetSystem(s)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -132,19 +132,19 @@ func (h UiSystemHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 func (h UiSystemHandlerGroup) Edit(w http.ResponseWriter, r *http.Request) {
 	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	s, err := h.systemRepo.GetSystemById(systemId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	profiles, err := h.profileRepo.GetProfiles()
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -162,13 +162,13 @@ func (h UiSystemHandlerGroup) Edit(w http.ResponseWriter, r *http.Request) {
 func (h UiSystemHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	s, err := parseSystemFromPostForm(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -176,7 +176,7 @@ func (h UiSystemHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = h.systemRepo.SetSystem(s)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -187,13 +187,13 @@ func (h UiSystemHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 func (h UiSystemHandlerGroup) Delete(w http.ResponseWriter, r *http.Request) {
 	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	err = h.systemRepo.DeleteSystemById(systemId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 

@@ -52,7 +52,7 @@ func NewUiProfileHandlerGroup(pr profile.Repository) UiProfileHandlerGroup {
 func (h UiProfileHandlerGroup) Overview(w http.ResponseWriter, r *http.Request) {
 	profiles, err := h.profileRepo.GetProfiles()
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -64,13 +64,13 @@ func (h UiProfileHandlerGroup) Overview(w http.ResponseWriter, r *http.Request) 
 func (h UiProfileHandlerGroup) Show(w http.ResponseWriter, r *http.Request) {
 	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	p, err := h.profileRepo.GetProfileById(profileId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (h UiProfileHandlerGroup) Create(w http.ResponseWriter, r *http.Request) {
 func (h UiProfileHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 	p, err := parseProfileFromPostForm(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -96,7 +96,7 @@ func (h UiProfileHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 
 	err = h.profileRepo.SetProfile(p)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -107,13 +107,13 @@ func (h UiProfileHandlerGroup) Store(w http.ResponseWriter, r *http.Request) {
 func (h UiProfileHandlerGroup) Edit(w http.ResponseWriter, r *http.Request) {
 	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	p, err := h.profileRepo.GetProfileById(profileId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -125,13 +125,13 @@ func (h UiProfileHandlerGroup) Edit(w http.ResponseWriter, r *http.Request) {
 func (h UiProfileHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	p, err := parseProfileFromPostForm(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -139,7 +139,7 @@ func (h UiProfileHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = h.profileRepo.SetProfile(p)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
@@ -150,13 +150,13 @@ func (h UiProfileHandlerGroup) Update(w http.ResponseWriter, r *http.Request) {
 func (h UiProfileHandlerGroup) Delete(w http.ResponseWriter, r *http.Request) {
 	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
 	err = h.profileRepo.DeleteProfileById(profileId)
 	if err != nil {
-		renderError(w, err)
+		renderError(w)
 		return
 	}
 
