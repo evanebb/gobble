@@ -1,0 +1,44 @@
+{{ define "content" }}
+    <div class="container-xxl">
+        <h2>Edit system</h2>
+        <form method="POST" action="/ui/systems/{{.System.Id}}">
+            <input type="hidden" name="_method" value="PUT">
+            <div class="mb-3">
+                <label for="id" class="form-label">ID</label>
+                <input type="text" disabled class="form-control" id="id" value="{{.System.Id}}">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{.System.Name}}">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description"
+                       value="{{.System.Description}}">
+            </div>
+            <div class="mb-3">
+                <label for="profile" class="form-label">Profile</label>
+                <select class="form-control" name="profile" id="profile">
+                    {{range $profile := .Profiles}}
+                        {{if eq $.System.Profile $profile.Id}}
+                            <option selected value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}}) (current)</option>
+                        {{else}}
+                            <option value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}})</option>
+                        {{end}}
+                    {{end}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="mac" class="form-label">MAC address</label>
+                <input type="text" class="form-control" id="mac" name="mac" value="{{.System.Mac}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernelParameters" class="form-label">Kernel parameters</label>
+                <input type="text" class="form-control" id="kernelParameters" name="kernelParameters"
+                       value="{{range $key,$value := .System.KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+            </div>
+            <button type="submit" class="btn btn-success">Update</button>
+            <a href="/ui/systems/{{.System.Id}}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+{{ end }}

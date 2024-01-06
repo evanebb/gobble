@@ -1,0 +1,44 @@
+{{ define "content" }}
+    <div class="container-xxl">
+        <h2>System</h2>
+        <form>
+            <div class="mb-3">
+                <label for="id" class="form-label">ID</label>
+                <input type="text" disabled class="form-control" id="id" value="{{.System.Id}}">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" disabled class="form-control" id="name" value="{{.System.Name}}">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" disabled class="form-control" id="description" value="{{.System.Description}}">
+            </div>
+            <div class="mb-3">
+                <label for="profile" class="form-label">Profile</label>
+                <div class="input-group">
+                    <input type="text" disabled class="form-control" id="profile" value="{{.Profile.Name}} ({{.Profile.Id}})">
+                    <a href="/ui/profiles/{{.System.Profile}}" class="input-group-text">Go to profile</a>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="mac" class="form-label">MAC address</label>
+                <input type="text" disabled class="form-control" id="mac" value="{{.System.Mac}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernelParameters" class="form-label">Kernel parameters</label>
+                <input type="text" disabled class="form-control" id="kernelParameters"
+                       value="{{range $key,$value := .System.KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+            </div>
+            <div class="mb-3">
+                <label for="pxeConfig" class="form-label">PXE config output</label>
+                <textarea class="form-control" id="pxeConfig" disabled></textarea>
+            </div>
+        </form>
+        <form method="POST" action="/ui/systems/{{.System.Id}}">
+            <a href="/ui/systems/{{.System.Id}}/edit" class="btn btn-dark">Edit</a>
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+{{ end }}

@@ -1,4 +1,4 @@
-package handlers
+package api_handlers
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/repository"
+	"github.com/evanebb/gobble/server/handlers"
 	"github.com/evanebb/gobble/system"
 	"github.com/google/uuid"
 	"net"
@@ -75,7 +76,7 @@ func (h SystemHandlerGroup) GetSystems(w http.ResponseWriter, r *http.Request) e
 }
 
 func (h SystemHandlerGroup) GetSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := getUUIDFromRequest(r)
+	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -128,7 +129,7 @@ func (h SystemHandlerGroup) CreateSystem(w http.ResponseWriter, r *http.Request)
 func (h SystemHandlerGroup) PutSystem(w http.ResponseWriter, r *http.Request) error {
 	var req systemRequest
 
-	systemId, err := getUUIDFromRequest(r)
+	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -164,7 +165,7 @@ func (h SystemHandlerGroup) PutSystem(w http.ResponseWriter, r *http.Request) er
 }
 
 func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := getUUIDFromRequest(r)
+	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -218,7 +219,7 @@ func (h SystemHandlerGroup) PatchSystem(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h SystemHandlerGroup) DeleteSystem(w http.ResponseWriter, r *http.Request) error {
-	systemId, err := getUUIDFromRequest(r)
+	systemId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

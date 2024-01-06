@@ -1,4 +1,4 @@
-package handlers
+package api_handlers
 
 import (
 	"errors"
@@ -48,9 +48,4 @@ func ErrorHandler(h ErrorHandlerFunc) http.HandlerFunc {
 
 func UnknownEndpointHandler(w http.ResponseWriter, r *http.Request) error {
 	return response.Error(w, http.StatusNotFound, "unknown endpoint, please refer to the documentation for available endpoints")
-}
-
-func IndexHandler(w http.ResponseWriter, r *http.Request) error {
-	html := "<h1>Welcome to gobble!</h1><p>Refer to the documentation for the available API endpoints.</p>"
-	return response.HTML(w, http.StatusOK, html)
 }

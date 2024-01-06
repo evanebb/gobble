@@ -1,4 +1,4 @@
-package handlers
+package api_handlers
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"github.com/evanebb/gobble/api/auth"
 	"github.com/evanebb/gobble/api/response"
 	"github.com/evanebb/gobble/repository"
+	"github.com/evanebb/gobble/server/handlers"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -63,7 +64,7 @@ func (h ApiUserHandlerGroup) GetUsers(w http.ResponseWriter, r *http.Request) er
 }
 
 func (h ApiUserHandlerGroup) GetUser(w http.ResponseWriter, r *http.Request) error {
-	userID, err := getUUIDFromRequest(r)
+	userID, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -108,7 +109,7 @@ func (h ApiUserHandlerGroup) CreateUser(w http.ResponseWriter, r *http.Request) 
 func (h ApiUserHandlerGroup) PutUser(w http.ResponseWriter, r *http.Request) error {
 	var req userRequest
 
-	userID, err := getUUIDFromRequest(r)
+	userID, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -135,7 +136,7 @@ func (h ApiUserHandlerGroup) PutUser(w http.ResponseWriter, r *http.Request) err
 }
 
 func (h ApiUserHandlerGroup) DeleteUser(w http.ResponseWriter, r *http.Request) error {
-	userID, err := getUUIDFromRequest(r)
+	userID, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

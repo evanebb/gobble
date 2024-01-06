@@ -1,4 +1,4 @@
-package handlers
+package api_handlers
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"github.com/evanebb/gobble/kernelparameters"
 	"github.com/evanebb/gobble/profile"
 	"github.com/evanebb/gobble/repository"
+	"github.com/evanebb/gobble/server/handlers"
 	"github.com/google/uuid"
 	"net/http"
 )
@@ -74,7 +75,7 @@ func (h ProfileHandlerGroup) GetProfiles(w http.ResponseWriter, r *http.Request)
 }
 
 func (h ProfileHandlerGroup) GetProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := getUUIDFromRequest(r)
+	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -122,7 +123,7 @@ func (h ProfileHandlerGroup) CreateProfile(w http.ResponseWriter, r *http.Reques
 func (h ProfileHandlerGroup) PutProfile(w http.ResponseWriter, r *http.Request) error {
 	var req profileRequest
 
-	profileId, err := getUUIDFromRequest(r)
+	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -153,7 +154,7 @@ func (h ProfileHandlerGroup) PutProfile(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h ProfileHandlerGroup) PatchProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := getUUIDFromRequest(r)
+	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}
@@ -202,7 +203,7 @@ func (h ProfileHandlerGroup) PatchProfile(w http.ResponseWriter, r *http.Request
 }
 
 func (h ProfileHandlerGroup) DeleteProfile(w http.ResponseWriter, r *http.Request) error {
-	profileId, err := getUUIDFromRequest(r)
+	profileId, err := handlers.GetUUIDFromRequest(r)
 	if err != nil {
 		return NewHTTPError(err, http.StatusBadRequest)
 	}

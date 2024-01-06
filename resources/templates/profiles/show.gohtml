@@ -1,0 +1,37 @@
+{{ define "content" }}
+    <div class="container-xxl">
+        <h2>Profile</h2>
+        <form>
+            <div class="mb-3">
+                <label for="id" class="form-label">ID</label>
+                <input type="text" disabled class="form-control" id="id" value="{{.Id}}">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" disabled class="form-control" id="name" value="{{.Name}}">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" disabled class="form-control" id="description" value="{{.Description}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernel" class="form-label">Kernel</label>
+                <input type="text" disabled class="form-control" id="kernel" value="{{.Kernel}}">
+            </div>
+            <div class="mb-3">
+                <label for="initrd" class="form-label">Initrd</label>
+                <input type="text" disabled class="form-control" id="initrd" value="{{.Initrd}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernelParameters" class="form-label">Kernel parameters</label>
+                <input type="text" disabled class="form-control" id="kernelParameters"
+                       value="{{range $key,$value := .KernelParameters}}{{if $value}}{{$key}}={{$value}}{{else}}{{$key}}{{end}}{{end}}">
+            </div>
+        </form>
+        <form method="POST" action="/ui/profiles/{{.Id}}">
+            <a href="/ui/profiles/{{.Id}}/edit" class="btn btn-dark">Edit</a>
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+{{ end }}
