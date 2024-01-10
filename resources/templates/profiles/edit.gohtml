@@ -1,0 +1,35 @@
+{{ define "content" }}
+    <div class="container-xxl">
+        <h2>Edit profile</h2>
+        <form method="POST" action="/ui/profiles/{{.Id}}">
+            <input type="hidden" name="_method" value="PUT">
+            <div class="mb-3">
+                <label for="id" class="form-label">ID</label>
+                <input type="text" disabled class="form-control" id="id" value="{{.Id}}">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{.Name}}">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description" value="{{.Description}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernel" class="form-label">Kernel</label>
+                <input type="text" class="form-control" id="kernel" name="kernel" value="{{.Kernel}}">
+            </div>
+            <div class="mb-3">
+                <label for="initrd" class="form-label">Initrd</label>
+                <input type="text" class="form-control" id="initrd" name="initrd" value="{{.Initrd}}">
+            </div>
+            <div class="mb-3">
+                <label for="kernelParameters" class="form-label">Kernel parameters</label>
+                <input type="text" class="form-control" id="kernelParameters" name="kernelParameters"
+                       value="{{.KernelParameters.String}}">
+            </div>
+            <button type="submit" class="btn btn-success">Update</button>
+            <a href="/ui/profiles/{{.Id}}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+{{ end }}

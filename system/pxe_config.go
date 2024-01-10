@@ -3,7 +3,6 @@ package system
 import (
 	"fmt"
 	"github.com/evanebb/gobble/kernelparameters"
-	"strings"
 )
 
 // TODO: create a PxeConfig interface with a Render() method, have the System struct implement it
@@ -41,9 +40,8 @@ func NewPxeConfig(kernel string, initrd string, kernelParameters kernelparameter
 }
 
 func (p PxeConfig) Render() string {
-	kp := kernelparameters.FormatKernelParameters(p.KernelParameters)
-	kpStr := strings.Join(kp, " ")
-	return fmt.Sprintf(template, p.Kernel, kpStr, p.Initrd)
+	kp := p.KernelParameters.String()
+	return fmt.Sprintf(template, p.Kernel, kp, p.Initrd)
 }
 
 func RenderNotFound() string {

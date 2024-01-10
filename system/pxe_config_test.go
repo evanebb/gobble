@@ -14,7 +14,7 @@ initrd testinitrd
 boot
 `
 
-	kp, err := kernelparameters.New([]string{"param1"})
+	kp, err := kernelparameters.ParseStringSlice([]string{"param1"})
 	if err != nil {
 		t.Fatalf(`NewPxeConfig(): failed to instantiate KernelParameters, error: %v`, err)
 	}

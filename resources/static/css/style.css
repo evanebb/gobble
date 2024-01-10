@@ -1,0 +1,7 @@
+.alternate-bg-color .row:nth-of-type(odd) {
+    background-color: var(--bs-card-cap-bg);
+}
+
+.table-fixed-width {
+    table-layout: fixed;
+}

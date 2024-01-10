@@ -1,0 +1,32 @@
+{{ define "content" }}
+    <div class="container-xxl">
+        <h2>Create system</h2>
+        <form method="POST" action="/ui/systems">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="description">
+            </div>
+            <div class="mb-3">
+                <label for="profile" class="form-label">Profile</label>
+                <select class="form-control" name="profile" id="profile">
+                    {{range $profile := .Profiles}}
+                        <option value="{{$profile.Id}}">{{$profile.Name}} ({{$profile.Id}})</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="mac" class="form-label">MAC address</label>
+                <input type="text" class="form-control" id="mac" name="mac">
+            </div>
+            <div class="mb-3">
+                <label for="kernelParameters" class="form-label">Kernel parameters</label>
+                <input type="text" class="form-control" id="kernelParameters" name="kernelParameters">
+            </div>
+            <button type="submit" class="btn btn-success">Create</button>
+        </form>
+    </div>
+{{ end }}
