@@ -32,5 +32,7 @@ jobs:
       - name: Upload binaries to release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
         run:
           gh release upload ${{ github.event.release.tag_name }} bin/gobble-$GOOS-$GOARCH
