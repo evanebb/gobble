@@ -37,9 +37,23 @@ func TestNewProfileInvalidKernel(t *testing.T) {
 	}
 }
 
+func TestNewProfileEmptyKernel(t *testing.T) {
+	actual, err := New(uuid.Nil, "TestProfile", "", "", "initrd", kernelparameters.KernelParameters{})
+	if err == nil {
+		t.Fatalf(`Expected New() to return empty kernel error, got: %v, %v`, actual, err)
+	}
+}
+
 func TestNewProfileInvalidInitrd(t *testing.T) {
 	actual, err := New(uuid.Nil, "TestProfile", "", "kernel", "invalid initrd", kernelparameters.KernelParameters{})
 	if err == nil {
 		t.Fatalf(`Expected New() to return invalid initrd error, got: %v, %v`, actual, err)
+	}
+}
+
+func TestNewProfileEmptyInitrd(t *testing.T) {
+	actual, err := New(uuid.Nil, "TestProfile", "", "kernel", "", kernelparameters.KernelParameters{})
+	if err == nil {
+		t.Fatalf(`Expected New() to return empty initrd error, got: %v, %v`, actual, err)
 	}
 }
