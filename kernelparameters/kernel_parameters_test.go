@@ -6,6 +6,32 @@ import (
 	"testing"
 )
 
+func TestKernelParameters_String(t *testing.T) {
+	v := KernelParameters{
+		"test1": "",
+		"test2": "value",
+	}
+
+	expected := "test1 test2=value"
+	actual := v.String()
+	if actual != expected {
+		t.Fatalf(`KernelParameters.String() = %s, expected: %s`, actual, expected)
+	}
+}
+
+func TestKernelParameters_StringSlice(t *testing.T) {
+	v := KernelParameters{
+		"test1": "",
+		"test2": "value",
+	}
+
+	expected := []string{"test1", "test2=value"}
+	actual := v.StringSlice()
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf(`KernelParameters.String() = %s, expected: %s`, actual, expected)
+	}
+}
+
 func TestParseString(t *testing.T) {
 	v := "test1 test2=value"
 
