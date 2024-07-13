@@ -80,6 +80,7 @@ func NewServer() (Server, error) {
 func (s *Server) Run() {
 	log.Printf("starting API on %s", s.config.listenAddress)
 	s.routes()
+	// FIXME: don't use default ListenAndServe functions
 	if s.config.httpsEnabled {
 		log.Fatal(http.ListenAndServeTLS(s.config.listenAddress, s.config.httpsCertFile, s.config.httpsKeyFile, s.router))
 	} else {
